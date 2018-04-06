@@ -86,8 +86,9 @@
             this.dataGridViewVenta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewVenta.Location = new System.Drawing.Point(48, 311);
             this.dataGridViewVenta.Name = "dataGridViewVenta";
-            this.dataGridViewVenta.Size = new System.Drawing.Size(565, 150);
+            this.dataGridViewVenta.Size = new System.Drawing.Size(535, 150);
             this.dataGridViewVenta.TabIndex = 6;
+            this.dataGridViewVenta.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewVenta_CellClick);
             // 
             // BtnInsertar
             // 
@@ -116,6 +117,7 @@
             this.BtnEliminar.TabIndex = 9;
             this.BtnEliminar.Text = "Eliminar";
             this.BtnEliminar.UseVisualStyleBackColor = true;
+            this.BtnEliminar.Click += new System.EventHandler(this.BtnEliminar_Click);
             // 
             // labelProductos
             // 

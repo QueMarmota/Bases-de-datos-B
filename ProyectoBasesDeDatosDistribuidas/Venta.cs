@@ -289,10 +289,287 @@ namespace ProyectoBasesDeDatosDistribuidas
         {
            
         }
+        private bool validaDatosEntrada()
+        {
+            if (textBoxDescripcionVenta.Text == "" || dateTimePickerFecha.Text == "" || listBoxCarrito.Items.Count <= 0 )
+            {
+                MessageBox.Show("Error de datos");
+                return false;
+            }
 
-        private void BtnInsertar_Click(object sender, EventArgs e)
+            return true;
+        }
+        private void limpiaCampos()
         {
 
+            textBoxDescripcionVenta.Clear();
+            richTextBoxTotal.Clear();
+            dateTimePickerFecha.Value = DateTime.Now;
+            listBoxCarrito.Items.Clear();
+
+        }
+        private int calculaCantidadProductos()
+        { 
+        
+            int cantidad =0;
+
+            foreach (string  producto in listBoxCarrito.Items)
+            {
+                string[] nombreycant = producto.Split('x');
+                cantidad += Int32.Parse(nombreycant.ElementAt(1).ToString());
+            }
+
+            return cantidad;
+        
+        }
+        private void BtnInsertar_Click(object sender, EventArgs e)
+        {
+            if (!validaDatosEntrada())
+                return;
+
+            try
+            {
+
+                string fechaVenta = dateTimePickerFecha.Value.ToString("yyyy-MM-dd");
+                string descripcion = textBoxDescripcionVenta.Text;
+                string productos="";
+                int cont = 1;
+                foreach (string  producto in listBoxCarrito.Items)
+                {
+                    if (cont == listBoxCarrito.Items.Count)
+                    {
+                        productos += producto ;
+                    }
+                    else
+                    {
+                        productos += producto + ",";
+                    }
+                    
+                    cont++;
+                }
+
+                string totalS = richTextBoxTotal.Text.ToString();
+                totalS = totalS.Remove(0,1);//hay q quitar el signo de pesos si no no lo converte a decimal
+                decimal total = decimal.Parse(totalS);
+                int cantidadProductos = calculaCantidadProductos();
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmento = new List<string>();
+                string nombreTablaGeneral = "";
+                string tipoFragmento = "";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+
+                switch (tipoFragmento)
+                {
+                    case "Horizontal":
+                        //si es insercion se hace en el sitio de la condicion          
+
+                        break;
+                    case "Vertical":
+
+                        break;
+                    case "Replica":
+                        //insertar en ambos sitios
+                        //si es insercion se hace en el sitio de la condicion
+                        try
+                        {
+                            if (sitios.ElementAt(0).Contains("1"))
+                            {
+                                //Insercion en sql server sitio1
+                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+                                //fin de insercion
+
+                                //Insercion en NPG sitio2
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(1).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta +"','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+                            else
+                            {
+                                //Insercion en sql server sitio1
+                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(1).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+                                //fin de insercion
+
+                                //Insercion en NPG sitio2
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+
+
+
+                        }
+                        catch (Exception error)
+                        {
+
+                            MessageBox.Show("ERROR al insertar : " + error.Message);
+                        }
+
+                        break;
+
+                    default:
+                        switch (sitios.ElementAt(0))
+                        {
+                            case "1":
+                                //Insercion en sql server
+                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+
+                                break;
+
+
+                            case "2":
+
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                command.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+
+                                break;
+                        }
+                        break;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("no se inserto" + ex.Message);
+            }
+        }
+
+        private void dataGridViewVenta_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                dateTimePickerFecha.Text = dataGridViewVenta.CurrentRow.Cells[1].Value.ToString();
+                textBoxDescripcionVenta.Text = dataGridViewVenta.CurrentRow.Cells[2].Value.ToString();
+                string[] productos = dataGridViewVenta.CurrentRow.Cells[3].Value.ToString().Split(',');
+                foreach (string item in productos)
+                {
+                    listBoxCarrito.Items.Add(item);
+                }
+                string temporalTotal = richTextBoxTotal.Text = dataGridViewVenta.CurrentRow.Cells[5].Value.ToString();
+                richTextBoxTotal.Text = richTextBoxTotal.Text.Insert(0, "$");
+                total = decimal.Parse(temporalTotal);
+                
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error en el datagrid cellclick" + ex);
+            }
+        }
+
+        private void BtnEliminar_Click(object sender, EventArgs e)
+        {
+            if (!validaDatosEntrada())
+                return;
+
+            try
+            {
+
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmento = new List<string>();
+                string nombreTablaGeneral = "";
+                string tipoFragmento = "";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+
+                switch (tipoFragmento)
+                {
+                    case "Horizontal":
+
+                        break;
+                    case "Vertical":
+                        break;
+                    case "Replica":
+                        //Eliminar en ambos sitios
+                        try
+                        {
+                            if (sitios.ElementAt(0).Contains("1"))
+                            {
+                                //eliminar en sql server
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //eliminar en postgressql
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                command.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+                            }
+                            else
+                            {
+
+                                //eliminar en sql server
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //eliminar en postgressql
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                command.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+
+                        break;
+
+                    default:
+                        switch (sitios.ElementAt(0))
+                        {
+                            case "1":
+                                //Insercion en sql server
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+
+                                break;
+
+
+                            case "2":
+
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                command.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiaCampos();
+
+                                break;
+                        }
+                        break;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("no se inserto" + ex.Message);
+            }
         }
     }
 }
