@@ -67,7 +67,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             cargaTabla();
 
         }
-        private int ChecaSiExisteOfertaYRegresaDescuento()
+        private int ChecaSiExisteOfertaYRegresaDescuento(string productoAChecar)
         {
 
             //PARA CARGAR LISTA DE PRODUCTOS
@@ -85,6 +85,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             SqlDataAdapter daOferta = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
             DataTable dtOferta = new DataTable();
             daOferta.Fill(dtOferta);
+            listaOfertas = new List<string>();
             // For each row, print the values of each column.
             //idOferta,descripcon,fecha,descuento,idProducto
             foreach (DataRow row in dtOferta.Rows)
@@ -93,6 +94,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
             string idProducto ="";
             string descuento = "";
+
             //checar si el producto tiene oferta
             foreach (string datoOferta in listaOfertas)
             {
@@ -116,15 +118,14 @@ namespace ProyectoBasesDeDatosDistribuidas
                 dr.Read();
                 string nombreDelProductoConDescuento = (dr[0]).ToString();
                 dr.Close();
-                foreach (string item in listBoxCarrito.Items)
+            
+                if (productoAChecar.Contains(nombreDelProductoConDescuento))
                 {
-                    if (item.Contains(nombreDelProductoConDescuento))
-                    {
                       
-                        int descuentoTemp =Convert.ToInt32(datoOferta.Split(',').ElementAt(3));
-                        return descuentoTemp;                 
-                    }
+                    int descuentoTemp =Convert.ToInt32(datoOferta.Split(',').ElementAt(3));
+                    return descuentoTemp;                 
                 }
+                
             }            
             return -1; 
         }
@@ -307,7 +308,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                            
                         }
                         //codigo para saber si el producto tiene DESCUENTO
-                        int descuento = ChecaSiExisteOfertaYRegresaDescuento();
+                        int descuento = ChecaSiExisteOfertaYRegresaDescuento(productoEnCarrito);
                 
                         if (descuento != -1)//si tiene descuento
                         {
@@ -345,7 +346,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                             listBoxCarrito.Items.Add(productoEnCarrito);
                         }
                         //codigo para saber si el producto tiene DESCUENTO
-                        int descuento = ChecaSiExisteOfertaYRegresaDescuento();
+                        int descuento = ChecaSiExisteOfertaYRegresaDescuento(productoEnCarrito);
                 
                         if (descuento != -1)//si tiene descuento
                         {
@@ -450,8 +451,20 @@ namespace ProyectoBasesDeDatosDistribuidas
                         }
 
                         //Codigo para disminuir total
-                        //codigo para aumentar total
-                        total -= Convert.ToDecimal(arraytemp[2]);
+                        int descuento = ChecaSiExisteOfertaYRegresaDescuento(productoEnCarrito);
+
+                        if (descuento != -1)//si tiene descuento
+                        {
+                            //codigo para aumentar total con descuento
+                            total -= (Convert.ToDecimal(arraytemp[2])*descuento) / 100;
+
+                        }
+                        else
+                        {
+                            //codigo para aumentar total
+                            total -= Convert.ToDecimal(arraytemp[2]);
+                        }
+                        
                         richTextBoxTotal.Text = "$" + total.ToString();
                         listBoxCarrito.ClearSelected();
                     
