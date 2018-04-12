@@ -1,0 +1,6 @@
+Proyecto bases de datos b
+
+Aplicar el descuento en la venta del producto
+
+
+En el fragmento horizontal la modifcacion hacer una baja y una alta

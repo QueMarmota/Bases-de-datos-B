@@ -50,7 +50,7 @@
             // labelNombre
             // 
             this.labelNombre.AutoSize = true;
-            this.labelNombre.Location = new System.Drawing.Point(45, 49);
+            this.labelNombre.Location = new System.Drawing.Point(47, 77);
             this.labelNombre.Name = "labelNombre";
             this.labelNombre.Size = new System.Drawing.Size(44, 13);
             this.labelNombre.TabIndex = 0;
@@ -58,14 +58,14 @@
             // 
             // textBoxNombre
             // 
-            this.textBoxNombre.Location = new System.Drawing.Point(109, 49);
+            this.textBoxNombre.Location = new System.Drawing.Point(111, 77);
             this.textBoxNombre.Name = "textBoxNombre";
             this.textBoxNombre.Size = new System.Drawing.Size(276, 20);
             this.textBoxNombre.TabIndex = 1;
             // 
             // textBoxDireccion
             // 
-            this.textBoxDireccion.Location = new System.Drawing.Point(109, 84);
+            this.textBoxDireccion.Location = new System.Drawing.Point(111, 112);
             this.textBoxDireccion.Name = "textBoxDireccion";
             this.textBoxDireccion.Size = new System.Drawing.Size(276, 20);
             this.textBoxDireccion.TabIndex = 3;
@@ -73,7 +73,7 @@
             // labelDireccion
             // 
             this.labelDireccion.AutoSize = true;
-            this.labelDireccion.Location = new System.Drawing.Point(45, 84);
+            this.labelDireccion.Location = new System.Drawing.Point(47, 112);
             this.labelDireccion.Name = "labelDireccion";
             this.labelDireccion.Size = new System.Drawing.Size(52, 13);
             this.labelDireccion.TabIndex = 2;
@@ -82,7 +82,7 @@
             // labelTipo
             // 
             this.labelTipo.AutoSize = true;
-            this.labelTipo.Location = new System.Drawing.Point(45, 119);
+            this.labelTipo.Location = new System.Drawing.Point(47, 147);
             this.labelTipo.Name = "labelTipo";
             this.labelTipo.Size = new System.Drawing.Size(28, 13);
             this.labelTipo.TabIndex = 4;
@@ -91,7 +91,7 @@
             // labelTelefono
             // 
             this.labelTelefono.AutoSize = true;
-            this.labelTelefono.Location = new System.Drawing.Point(45, 187);
+            this.labelTelefono.Location = new System.Drawing.Point(47, 215);
             this.labelTelefono.Name = "labelTelefono";
             this.labelTelefono.Size = new System.Drawing.Size(49, 13);
             this.labelTelefono.TabIndex = 6;
@@ -100,7 +100,7 @@
             // labelEmail
             // 
             this.labelEmail.AutoSize = true;
-            this.labelEmail.Location = new System.Drawing.Point(45, 152);
+            this.labelEmail.Location = new System.Drawing.Point(47, 180);
             this.labelEmail.Name = "labelEmail";
             this.labelEmail.Size = new System.Drawing.Size(32, 13);
             this.labelEmail.TabIndex = 5;
@@ -114,21 +114,21 @@
             "Recursos",
             "Servicios",
             "Bienestar"});
-            this.comboBoxTipo.Location = new System.Drawing.Point(109, 111);
+            this.comboBoxTipo.Location = new System.Drawing.Point(111, 139);
             this.comboBoxTipo.Name = "comboBoxTipo";
             this.comboBoxTipo.Size = new System.Drawing.Size(141, 21);
             this.comboBoxTipo.TabIndex = 7;
             // 
             // textBoxTelefono
             // 
-            this.textBoxTelefono.Location = new System.Drawing.Point(109, 184);
+            this.textBoxTelefono.Location = new System.Drawing.Point(111, 212);
             this.textBoxTelefono.Name = "textBoxTelefono";
             this.textBoxTelefono.Size = new System.Drawing.Size(190, 20);
             this.textBoxTelefono.TabIndex = 9;
             // 
             // textBoxEmail
             // 
-            this.textBoxEmail.Location = new System.Drawing.Point(109, 149);
+            this.textBoxEmail.Location = new System.Drawing.Point(111, 177);
             this.textBoxEmail.Name = "textBoxEmail";
             this.textBoxEmail.Size = new System.Drawing.Size(190, 20);
             this.textBoxEmail.TabIndex = 8;
@@ -176,7 +176,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(33, 213);
+            this.label1.Location = new System.Drawing.Point(35, 54);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(70, 13);
             this.label1.TabIndex = 14;
@@ -184,7 +184,7 @@
             // 
             // textBoxidProveedor
             // 
-            this.textBoxidProveedor.Location = new System.Drawing.Point(109, 210);
+            this.textBoxidProveedor.Location = new System.Drawing.Point(111, 51);
             this.textBoxidProveedor.Name = "textBoxidProveedor";
             this.textBoxidProveedor.Size = new System.Drawing.Size(276, 20);
             this.textBoxidProveedor.TabIndex = 15;

@@ -206,22 +206,51 @@ namespace ProyectoBasesDeDatosDistribuidas
 
         private bool validaDatos() 
         {
-
             if (textBoxNombre.Text == "" || comboBoxidProveedor.Text == "" || numericCantidad.Value <= 0 || numericCantidad.Value <= 0 )
             {
                 MessageBox.Show("Error de datos");
                 return false;
-            }
+            }                     
+            return true;        
+        }
 
+        private bool ChecaExistenciaProducto() {
+            try
+            {
+                string producto = textBoxNombre.Text;
+                string renglon = "";
+                foreach (DataGridViewRow row in dataGridViewProducto.Rows)
+                {
+                    renglon = row.Cells["Nombre"].Value.ToString();
+                    if (string.Equals(renglon, producto, StringComparison.CurrentCultureIgnoreCase))//Para comparar cadenas con caso insensitive
+                    {
+                        return true;
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                
+              
+            }
             
-            return true;
-        
+
+
+            return false;
         }
 
         private void BtnInsertar_Click(object sender, System.EventArgs e)
         {
             if (!validaDatos())
                 return;
+
+            //CHECAR SI EL PRODUCTo YA EXISTE
+            if (ChecaExistenciaProducto())//si existe manda mensaje de error y se sale de la funcion
+            {
+                MessageBox.Show("Error , Producto ya en existencía");
+                return;
+            }
 
             try
             {

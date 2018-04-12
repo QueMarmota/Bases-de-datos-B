@@ -208,7 +208,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(650, 546);
+            this.ClientSize = new System.Drawing.Size(634, 546);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.richTextBoxTotal);
             this.Controls.Add(this.Carrito);

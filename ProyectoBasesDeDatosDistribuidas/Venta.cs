@@ -17,6 +17,8 @@ namespace ProyectoBasesDeDatosDistribuidas
     public partial class Venta : Form
     {//lista que contiene el id_proveedor y nombre
         List<string> listaidProductoNombrePrecioCantidad = new List<string>();
+        List<string> listaOfertas = new List<string>();
+        List<string> listaInventarioCarrito = new List<string>();
         bool banderaNoPermiteModificarListBox = false;
         decimal total;
         //varaibles para sql
@@ -64,6 +66,67 @@ namespace ProyectoBasesDeDatosDistribuidas
             cargaCOMBOListBoxInventarioProductos();
             cargaTabla();
 
+        }
+        private int ChecaSiExisteOfertaYRegresaDescuento()
+        {
+
+            //PARA CARGAR LISTA DE PRODUCTOS
+            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+            //variables necesarias para sacar datos del esquema de localizacion
+            List<string> idFragmentos = new List<string>();
+            List<string> nombreTablaBDFragmento = new List<string>();
+            string nombreTablaGeneral = "";
+            string tipoFragmento = "";
+            List<string> sitios = new List<string>();
+            List<string> condicion = new List<string>();
+            SitioCentral st = new SitioCentral();
+            st.LeeEsquemaLocalizacion("Oferta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+            //carga lista de ofertas
+            SqlDataAdapter daOferta = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
+            DataTable dtOferta = new DataTable();
+            daOferta.Fill(dtOferta);
+            // For each row, print the values of each column.
+            //idOferta,descripcon,fecha,descuento,idProducto
+            foreach (DataRow row in dtOferta.Rows)
+            {
+                listaOfertas.Add(row[dtOferta.Columns[0]].ToString() + "," + row[dtOferta.Columns[1]].ToString() + "," + row[dtOferta.Columns[2]].ToString() + "," + row[dtOferta.Columns[3]].ToString()+ "," + row[dtOferta.Columns[4]].ToString());
+            }
+            string idProducto ="";
+            string descuento = "";
+            //checar si el producto tiene oferta
+            foreach (string datoOferta in listaOfertas)
+            {
+                string[] substring = datoOferta.Split(',');
+                descuento = substring.ElementAt(3).ToString();
+                idProducto = substring.ElementAt(4).ToString();
+                //ahora tengo el id del producto que tiene la oferta , ahora tengo q buscar que nombre de producto es ese id de producto
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentosProducto = new List<string>();
+                List<string> nombreTablaBDFragmentoProducto = new List<string>();
+                string nombreTablaGeneralProducto = "";
+                string tipoFragmentoProducto = "";
+                List<string> sitiosProducto = new List<string>();
+                List<string> condicionProducto = new List<string>();
+                st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Producto", ref idFragmentosProducto, ref nombreTablaBDFragmentoProducto, ref nombreTablaGeneralProducto, ref sitiosProducto, ref tipoFragmentoProducto, ref condicionProducto);
+                //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
+                cmd = new SqlCommand("Select nombre from "+nombreTablaBDFragmentoProducto.ElementAt(0)+" where id_Producto = '" + idProducto + "'", cnSQL);
+                dr = cmd.ExecuteReader();
+                dr.Read();
+                string nombreDelProductoConDescuento = (dr[0]).ToString();
+                dr.Close();
+                foreach (string item in listBoxCarrito.Items)
+                {
+                    if (item.Contains(nombreDelProductoConDescuento))
+                    {
+                      
+                        int descuentoTemp =Convert.ToInt32(datoOferta.Split(',').ElementAt(3));
+                        return descuentoTemp;                 
+                    }
+                }
+            }            
+            return -1; 
         }
         private void CargalistaidProductoNombrePrecioCantidad()
         {
@@ -189,24 +252,24 @@ namespace ProyectoBasesDeDatosDistribuidas
                 //id producto , nombre , precio , cantidad en el stock
                 string[] temp = item.Split(',');
                 listBoxInventario.Items.Add(temp.ElementAt(1)+" x"+temp.ElementAt(3));
-                
+         
             }
           
         }
 
         private void listBoxInventario_MouseDown(object sender, MouseEventArgs e)
         {
+
             try
             {
-               
+                
                 //codigo para restar un producto en la lista stock
                 string dato = listBoxInventario.Items[listBoxInventario.SelectedIndex].ToString();
                 string[] nombreycantidad = dato.Split('x');
                 int cantidadmenos1 = Int32.Parse(nombreycantidad.ElementAt(1)) - 1;
                 if (banderaNoPermiteModificarListBox)//si esta activada la bandera es por que se quiere pasar un producto del carrito al stock y no se puede
                 {
-                    MessageBox.Show("No se puede agregar mas Productos!!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                  
+                    MessageBox.Show("No se puede agregar mas Productos!!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);                  
                 }
                 else
                 {
@@ -241,10 +304,21 @@ namespace ProyectoBasesDeDatosDistribuidas
                         else //si no existe se agrega
                         {
                             listBoxCarrito.Items.Add(productoEnCarrito);
+                           
                         }
-
-                        //codigo para aumentar total
-                        total += Convert.ToDecimal(arraytemp2[2]);
+                        //codigo para saber si el producto tiene DESCUENTO
+                        int descuento = ChecaSiExisteOfertaYRegresaDescuento();
+                
+                        if (descuento != -1)//si tiene descuento
+                        {
+                            //codigo para aumentar total con descuento
+                            total += (Convert.ToDecimal(arraytemp2[2])*descuento)/100;
+                        }
+                        else
+                        {
+                            //codigo para aumentar total
+                            total += Convert.ToDecimal(arraytemp2[2]);
+                        }
                         //richTextBoxTotal.SelectionColor = Color.Lime;
 
                         //richTextBoxTotal.SelectionFont = new Font("Verdana", 15, FontStyle.Regular);
@@ -270,9 +344,20 @@ namespace ProyectoBasesDeDatosDistribuidas
                         {
                             listBoxCarrito.Items.Add(productoEnCarrito);
                         }
+                        //codigo para saber si el producto tiene DESCUENTO
+                        int descuento = ChecaSiExisteOfertaYRegresaDescuento();
+                
+                        if (descuento != -1)//si tiene descuento
+                        {
+                            //codigo para aumentar total con descuento
+                            total += (Convert.ToDecimal(arraytemp[2]) * descuento) / 100;
+                        }
+                        else
+                        {
+                            //codigo para aumentar total
+                            total += Convert.ToDecimal(arraytemp[2]);
+                        }
 
-                        //codigo para aumentar total
-                        total += Convert.ToDecimal(arraytemp[2]);
                         //richTextBoxTotal.SelectionColor = Color.Lime;
 
                         //richTextBoxTotal.SelectionFont = new Font("Verdana", 15, FontStyle.Regular);
@@ -285,6 +370,8 @@ namespace ProyectoBasesDeDatosDistribuidas
                     }
                 }
                 listBoxInventario.ClearSelected();
+
+                
 
             }
             catch (Exception)
@@ -421,6 +508,8 @@ namespace ProyectoBasesDeDatosDistribuidas
         {
             if (!validaDatosEntrada())
                 return;
+
+
 
             try
             {
@@ -942,5 +1031,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             cargaCOMBOListBoxInventarioProductos();
             total = 0;
         }
+
+        
     }
 }

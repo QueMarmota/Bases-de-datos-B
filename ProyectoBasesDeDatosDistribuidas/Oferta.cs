@@ -244,7 +244,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
         private bool validaDatos()
         {
-            if (textBoxDescripcion.Text == "" || comboBoxidProducto.Text == "" || numericDescuento.Value <= 0)
+            if (textBoxDescripcion.Text == ""  || numericDescuento.Value <= 0)
             {
                 MessageBox.Show("Error de datos");
                 return false;
@@ -292,7 +292,8 @@ namespace ProyectoBasesDeDatosDistribuidas
 	            {
 		                if(item.Contains(comboBoxidProducto.Text))
                         {
-                            idProducto = item.ElementAt(0).ToString();
+                            string[] cadenasplit = item.Split(',');
+                            idProducto = cadenasplit.ElementAt(0).ToString();
                         }
 	            } 
                 
@@ -329,8 +330,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + descripcion + "','" + Vigencia + "'," + Descuento+ ",'" + Convert.ToInt32(idProducto) + "')";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
-                                cargaTabla();
-                                limpiarCampos();
+
                                 //fin de insercion
 
                                 //Insercion en NPG sitio2

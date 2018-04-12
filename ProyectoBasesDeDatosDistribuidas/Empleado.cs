@@ -15,6 +15,8 @@ namespace ProyectoBasesDeDatosDistribuidas
 {
     public partial class Empleado : Form
     {
+        string GlobalPuesto = "";
+        bool bandModifica = false;
         //varaibles para sql
         SqlConnection cnSQL; //conexion
         SqlCommand cmd; //comando
@@ -312,7 +314,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             {
                 TextBoxNombre.Text = dataGridViewEmpleado.CurrentRow.Cells[1].Value.ToString();
                 NumericSueldo.Value = Int32.Parse(dataGridViewEmpleado.CurrentRow.Cells[2].Value.ToString());
-                ComboBoxPuesto.Text = dataGridViewEmpleado.CurrentRow.Cells[3].Value.ToString();
+                ComboBoxPuesto.Text = GlobalPuesto = dataGridViewEmpleado.CurrentRow.Cells[3].Value.ToString();
                 TextBoxTelefono.Text = dataGridViewEmpleado.CurrentRow.Cells[4].Value.ToString();
                 TextBoxDireccion.Text = dataGridViewEmpleado.CurrentRow.Cells[5].Value.ToString();
                 dateTimePickerFechaNacimiento.Text = dataGridViewEmpleado.CurrentRow.Cells[6].Value.ToString();
@@ -361,7 +363,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                     renglon += idFragmentos.ElementAt(i).ToString() + "," + nombreTablaBDFragmento.ElementAt(i).ToString() + "," + nombreTablaGeneral + "," + tipoFragmento + "," + sitios.ElementAt(i).ToString() + "," + condicion.ElementAt(i).ToString();
                     //Orden : idfragmento , nombrefragmento , tabla , tipo , sitio , condicion
                     atributos = renglon.Split(',');
-                    if (atributos.ElementAt(5).Contains(ComboBoxPuesto.Text))
+                    if (atributos.ElementAt(5).Contains(GlobalPuesto))
                     { break; }
                     renglon = "";
                 }
@@ -371,7 +373,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                         if (tipoFragmento == "Horizontal")
                         {
                             //si es insercion se hace en el sitio de la condicion
-                            switch (ComboBoxPuesto.Text)
+                            switch (GlobalPuesto)
                             {
                                 //Sitio1
                                 case "Empleado":
@@ -380,9 +382,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                     cmd = new SqlCommand(consulta, cnSQL);
                                     dr.Close();
                                     cmd.ExecuteNonQuery();
-                                    cargaTabla();
-                                    limpiarCampos();
-                                    //fin de insercion
+                                    //fin de eliminacion
                                     break;
                                 //Sitio2
                                 case "Administrador":
@@ -399,10 +399,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                                         MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
                                     }
-
-                                    cargaTabla();
-                                    limpiarCampos();
-                                    //fin de insercion
+                                   
                                     break;
 
                                 default:
@@ -425,7 +422,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                         break;
                 }
 
-
+                if (!bandModifica)
+                {
+                    cargaTabla();
+                    limpiarCampos();
+                }//fin de eliminacion
             }
             catch (Exception ex)
             {
@@ -439,6 +440,22 @@ namespace ProyectoBasesDeDatosDistribuidas
             if (!validaDatosEntrada())
                 return;
 
+            try
+            {
+                bandModifica = true;
+                BtnElimina_Click(this, null);
+                BtnInsertar_Click(this, null);
+                bandModifica = false;
+                cargaTabla();
+                limpiarCampos();
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
+            
+            /*
             try
             {
                 string fecha_nacimiento = dateTimePickerFechaNacimiento.Value.ToString("yyyy-MM-dd");
@@ -540,7 +557,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             {
                 Console.WriteLine("no se inserto" + ex.Message);
             }
-
+            */
         }
 
         private void comboBoxidSucursal_Enter_1(object sender, EventArgs e)
