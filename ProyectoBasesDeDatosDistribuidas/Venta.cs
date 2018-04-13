@@ -33,6 +33,31 @@ namespace ProyectoBasesDeDatosDistribuidas
         DataSet datos = new DataSet();
         DataTable dtNPG = new DataTable();
         NpgsqlConnection conNPG = new NpgsqlConnection();
+
+        public struct VariablesNecesariasParaEsquemaLocalizacion//estructura para evitar estar repitiendo codigo
+        {
+            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+            //variables necesarias para sacar datos del esquema de localizacion
+            public List<string> idFragmentos ;
+            public List<string> nombreTablaBDFragmento  ;
+            public string nombreTablaGeneral ;
+            public string tipoFragmento ;
+            public List<string> sitios ;
+            public List<string> condicion ;
+            public SitioCentral st ;
+            public void DeclaraVariables()
+            {
+                
+                this.idFragmentos = new List<string>();
+                this.nombreTablaBDFragmento = new List<string>();
+                this.nombreTablaGeneral = "";
+                this.tipoFragmento = "";
+                this.sitios = new List<string>();
+                this.condicion = new List<string>();
+                this.st = new SitioCentral();
+            }
+            
+        }  
         public Venta()
         {
             InitializeComponent();
@@ -73,16 +98,11 @@ namespace ProyectoBasesDeDatosDistribuidas
             //PARA CARGAR LISTA DE PRODUCTOS
             //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
             //variables necesarias para sacar datos del esquema de localizacion
-            List<string> idFragmentos = new List<string>();
-            List<string> nombreTablaBDFragmento = new List<string>();
-            string nombreTablaGeneral = "";
-            string tipoFragmento = "";
-            List<string> sitios = new List<string>();
-            List<string> condicion = new List<string>();
-            SitioCentral st = new SitioCentral();
-            st.LeeEsquemaLocalizacion("Oferta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+            VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+            v.DeclaraVariables();
+            v.st.LeeEsquemaLocalizacion("Oferta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
             //carga lista de ofertas
-            SqlDataAdapter daOferta = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
+            SqlDataAdapter daOferta = new SqlDataAdapter("Select * from " + v.nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
             DataTable dtOferta = new DataTable();
             daOferta.Fill(dtOferta);
             listaOfertas = new List<string>();
@@ -104,16 +124,10 @@ namespace ProyectoBasesDeDatosDistribuidas
                 //ahora tengo el id del producto que tiene la oferta , ahora tengo q buscar que nombre de producto es ese id de producto
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentosProducto = new List<string>();
-                List<string> nombreTablaBDFragmentoProducto = new List<string>();
-                string nombreTablaGeneralProducto = "";
-                string tipoFragmentoProducto = "";
-                List<string> sitiosProducto = new List<string>();
-                List<string> condicionProducto = new List<string>();
-                st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Producto", ref idFragmentosProducto, ref nombreTablaBDFragmentoProducto, ref nombreTablaGeneralProducto, ref sitiosProducto, ref tipoFragmentoProducto, ref condicionProducto);
+                v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.st.LeeEsquemaLocalizacion("Producto", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
                 //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
-                cmd = new SqlCommand("Select nombre from "+nombreTablaBDFragmentoProducto.ElementAt(0)+" where id_Producto = '" + idProducto + "'", cnSQL);
+                cmd = new SqlCommand("Select nombre from "+v.nombreTablaBDFragmento.ElementAt(0)+" where id_Producto = '" + idProducto + "'", cnSQL);
                 dr = cmd.ExecuteReader();
                 dr.Read();
                 string nombreDelProductoConDescuento = (dr[0]).ToString();
@@ -136,16 +150,11 @@ namespace ProyectoBasesDeDatosDistribuidas
             //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
             //variables necesarias para sacar datos del esquema de localizacion
             listaidProductoNombrePrecioCantidad = new List<string>();
-            List<string> idFragmentos = new List<string>();
-            List<string> nombreTablaBDFragmento = new List<string>();
-            string nombreTablaGeneral = "";
-            string tipoFragmento = "";
-            List<string> sitios = new List<string>();
-            List<string> condicion = new List<string>();
-            SitioCentral st = new SitioCentral();
-            st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+            VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+            v.DeclaraVariables();
+            v.st.LeeEsquemaLocalizacion("Producto", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
             //carga una lista con id y nombre de los productos
-            SqlDataAdapter daProducto = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
+            SqlDataAdapter daProducto = new SqlDataAdapter("Select * from " + v.nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
             DataTable dtProducto = new DataTable();
             daProducto.Fill(dtProducto);
             // For each row, print the values of each column.
@@ -205,15 +214,10 @@ namespace ProyectoBasesDeDatosDistribuidas
             {
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentos = new List<string>();
-                List<string> nombreTablaBDFragmento = new List<string>();
-                string nombreTablaGeneral = "";
-                string tipoFragmento = "";
-                List<string> sitios = new List<string>();
-                List<string> condicion = new List<string>();
-                SitioCentral st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
-                switch (tipoFragmento)
+                VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.DeclaraVariables();
+                v.st.LeeEsquemaLocalizacion("Venta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
+                switch (v.tipoFragmento)
                 {
                     //si es horizontal tiene las mismas columnas y solo hacemos merge en las rows
                     case "Horizontal":
@@ -224,11 +228,11 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                         break;
                     case "Replica":
-                        MezclaBDReplica(nombreTablaBDFragmento);
+                        MezclaBDReplica(v.nombreTablaBDFragmento);
                         break;
 
                     default:
-                        mezcaBDNormalDelSitio(sitios, nombreTablaBDFragmento);
+                        mezcaBDNormalDelSitio(v.sitios, v.nombreTablaBDFragmento);
                         break;
                 }
 
@@ -571,7 +575,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                     }
                     listaDeProductoActualizado.Add(idproductonombreyNuevaCantidad);
                     cont++;
-                }
+                }//FIN DE FOREACH LISTBOXCARRITO PARA LLENAR LA LISTA ACTUALIZADA
 
                 string totalS = richTextBoxTotal.Text.ToString();
                 totalS = totalS.Remove(0,1);//hay q quitar el signo de pesos si no no lo converte a decimal
@@ -579,16 +583,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                 int cantidadProductos = calculaCantidadProductos();
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentos = new List<string>();
-                List<string> nombreTablaBDFragmento = new List<string>();
-                string nombreTablaGeneral = "";
-                string tipoFragmento = "";
-                List<string> sitios = new List<string>();
-                List<string> condicion = new List<string>();
-                SitioCentral st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.DeclaraVariables();
+                v.st.LeeEsquemaLocalizacion("Venta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
 
-                switch (tipoFragmento)
+                switch (v.tipoFragmento)
                 {
                     case "Horizontal":
                         //si es insercion se hace en el sitio de la condicion          
@@ -602,10 +601,10 @@ namespace ProyectoBasesDeDatosDistribuidas
                         //si es insercion se hace en el sitio de la condicion
                         try
                         {
-                            if (sitios.ElementAt(0).Contains("1"))
+                            if (v.sitios.ElementAt(0).Contains("1"))
                             {
                                 //Insercion en sql server sitio1
-                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                string consulta = "Insert into " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -613,13 +612,15 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 //fin de insercion
 
                                 //Insercion en NPG sitio2
-                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(1).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta +"','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta +"','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
                                 command.ExecuteNonQuery();
+
+                                eliminaProductoOModifica(listaDeProductoActualizado);
                             }
                             else
                             {
                                 //Insercion en sql server sitio1
-                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(1).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                string consulta = "Insert into " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -627,8 +628,10 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 //fin de insercion
 
                                 //Insercion en NPG sitio2
-                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
                                 command.ExecuteNonQuery();
+
+                                eliminaProductoOModifica(listaDeProductoActualizado);
                             }
 
 
@@ -643,159 +646,27 @@ namespace ProyectoBasesDeDatosDistribuidas
                         break;
 
                     default:
-                        switch (sitios.ElementAt(0))
+                        switch (v.sitios.ElementAt(0))
                         {
                             case "1":
                                 //Insercion en sql server
-                                string consulta = "Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
+                                string consulta = "Insert into " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
                                 limpiaCampos();
+                                eliminaProductoOModifica(listaDeProductoActualizado);
 
                                 break;
 
 
                             case "2":
 
-                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " (fecha,descripción,productos,cantidad,total) values('" + fechaVenta + "','" + descripcion + "','" + productos + "'," + cantidadProductos + "," + total + ")", conNPG);
                                 command.ExecuteNonQuery();
                                 cargaTabla();
                                 limpiaCampos();
-                                //si se inserto hacer la actualizacion en la tabla productos--------------
-                                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
-                                //variables necesarias para sacar datos del esquema de localizacion
-                                idFragmentos = new List<string>();
-                                nombreTablaBDFragmento = new List<string>();
-                                nombreTablaGeneral = "";
-                                tipoFragmento = "";
-                                sitios = new List<string>();
-                                condicion = new List<string>();
-                                st = new SitioCentral();
-                                st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
-                                switch (tipoFragmento)
-                                {
-                                    case "Horizontal":
-
-                                        break;
-                                    case "Vertical":
-
-                                        break;
-                                    case "Replica":
-
-                                        if (sitios.ElementAt(0).Contains("1"))
-                                        {
-                                            foreach (string item in listaDeProductoActualizado)
-                                            {
-                                                if (item.Split(',').ElementAt(2) != "0")
-                                                {
-                                                    string consultaS = "UPDATE " + nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                    cmd = new SqlCommand(consultaS, cnSQL);
-                                                    cmd.ExecuteNonQuery();
-                                                    //modificar en postgresql
-                                                    command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento[1].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                    command.ExecuteNonQuery();
-                                                }
-                                                else
-                                                //se elimina el producto si se vendio toda la cantidad
-                                                {
-                                                    string consultaS = "DELETE FROM " + nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                    cmd = new SqlCommand(consultaS, cnSQL);
-                                                    cmd.ExecuteNonQuery();
-                                                    //modificar en postgresql
-                                                    command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento[1].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                    command.ExecuteNonQuery();
-
-                                                }
-                                            }
-                                            
-                                        }
-                                        else
-                                        {
-
-
-                                            foreach (string item in listaDeProductoActualizado)
-                                            {
-                                                if (item.Split(',').ElementAt(2) != "0")
-                                                {
-                                                    string consultaS = "UPDATE " + nombreTablaBDFragmento[1].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                    cmd = new SqlCommand(consultaS, cnSQL);
-                                                    cmd.ExecuteNonQuery();
-                                                    //modificar en postgresql
-                                                    command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                    command.ExecuteNonQuery();
-                                                }
-                                                else
-                                                //se elimina el producto si se vendio toda la cantidad
-                                                {
-                                                    string consultaS = "DELETE FROM " + nombreTablaBDFragmento[1].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                    cmd = new SqlCommand(consultaS, cnSQL);
-                                                    cmd.ExecuteNonQuery();
-                                                    //modificar en postgresql
-                                                    command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                    command.ExecuteNonQuery();
-
-                                                }
-                                            }
-
-
-                                        }
-                                        break;
-
-                                    default:
-
-                                        switch (sitios.ElementAt(0))
-                                        {
-                                            case "1":
-                                                foreach (string item in listaDeProductoActualizado)
-                                                {
-                                                    if (item.Split(',').ElementAt(2) != "0")
-                                                    {
-                                                        string consultaS = "UPDATE " + nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                        cmd = new SqlCommand(consultaS, cnSQL);
-                                                        cmd.ExecuteNonQuery();
-                                                       
-                                                    }
-                                                    else
-                                                    //se elimina el producto si se vendio toda la cantidad
-                                                    {
-                                                        string consultaS = "DELETE FROM " + nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
-                                                        cmd = new SqlCommand(consultaS, cnSQL);
-                                                        cmd.ExecuteNonQuery();
-                                                        
-
-                                                    }
-                                                }
-
-
-                                                break;
-
-
-                                            case "2":
-                                                foreach (string item in listaDeProductoActualizado)
-                                                {
-                                                    if (item.Split(',').ElementAt(2) != "0")
-                                                    {
-                                                        
-                                                        //modificar en postgresql
-                                                        command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                        command.ExecuteNonQuery();
-                                                    }
-                                                    else
-                                                    //se elimina el producto si se vendio toda la cantidad
-                                                    {
-                                                        
-                                                        //modificar en postgresql
-                                                        command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
-                                                        command.ExecuteNonQuery();
-
-                                                    }
-                                                }
-                                                break;
-                                        }
-
-                                        break;
-                                }
+                                eliminaProductoOModifica(listaDeProductoActualizado);
                                 ///fin de actualizacion
                                 break;
                         }
@@ -810,6 +681,145 @@ namespace ProyectoBasesDeDatosDistribuidas
             {
                 Console.WriteLine("no se inserto" + ex.Message);
             }
+        }
+
+        private void eliminaProductoOModifica(List<string> listaDeProductoActualizado)
+        {
+
+            //VALIDACION PARA EL PRODUCTO EN SITIOS
+            //si se inserto hacer la actualizacion en la tabla productos--------------
+            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+            //variables necesarias para sacar datos del esquema de localizacion
+            NpgsqlCommand command;
+            VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+            v.DeclaraVariables();
+            v.st.LeeEsquemaLocalizacion("Producto", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
+            switch (v.tipoFragmento)
+            {
+                case "Horizontal":
+
+                    break;
+                case "Vertical":
+
+                    break;
+                case "Replica":
+
+                    if (v.sitios.ElementAt(0).Contains("1"))
+                    {
+                        foreach (string item in listaDeProductoActualizado)
+                        {
+                            if (item.Split(',').ElementAt(2) != "0")
+                            {
+                                string consultaS = "UPDATE " + v.nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                cmd = new SqlCommand(consultaS, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //modificar en postgresql
+                                command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento[1].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+                            else
+                            //se elimina el producto si se vendio toda la cantidad y SE ELIMINA LA OFERTA SI ES QUE EL PRODUCTO TIENE
+                            {
+                                string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                cmd = new SqlCommand(consultaS, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //modificar en postgresql
+                                command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[1].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+
+
+
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+
+                        foreach (string item in listaDeProductoActualizado)
+                        {
+                            if (item.Split(',').ElementAt(2) != "0")
+                            {
+                                string consultaS = "UPDATE " + v.nombreTablaBDFragmento[1].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                cmd = new SqlCommand(consultaS, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //modificar en postgresql
+                                command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+                            else
+                            //se elimina el producto si se vendio toda la cantidad
+                            {
+                                string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[1].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                cmd = new SqlCommand(consultaS, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //modificar en postgresql
+                                command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+
+                            }
+                        }
+
+
+                    }
+                    break;
+
+                default:
+
+                    switch (v.sitios.ElementAt(0))
+                    {
+                        case "1":
+                            foreach (string item in listaDeProductoActualizado)
+                            {
+                                if (item.Split(',').ElementAt(2) != "0")
+                                {
+                                    string consultaS = "UPDATE " + v.nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                    cmd = new SqlCommand(consultaS, cnSQL);
+                                    cmd.ExecuteNonQuery();
+
+                                }
+                                else
+                                //se elimina el producto si se vendio toda la cantidad
+                                {
+                                    string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
+                                    cmd = new SqlCommand(consultaS, cnSQL);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+
+                            break;
+
+
+                        case "2":
+                            foreach (string item in listaDeProductoActualizado)
+                            {
+                                if (item.Split(',').ElementAt(2) != "0")
+                                {
+
+                                    //modificar en postgresql
+                                    command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                    command.ExecuteNonQuery();
+                                }
+                                else
+                                //se elimina el producto si se vendio toda la cantidad
+                                {
+
+                                    //modificar en postgresql
+                                    command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
+                                    command.ExecuteNonQuery();
+
+                                }
+                            }
+                            break;
+                    }
+
+                    break;
+            }
+        
+        
         }
 
         private void dataGridViewVenta_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -854,16 +864,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                 banderaNoPermiteModificarListBox = false;
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentos = new List<string>();
-                List<string> nombreTablaBDFragmento = new List<string>();
-                string nombreTablaGeneral = "";
-                string tipoFragmento = "";
-                List<string> sitios = new List<string>();
-                List<string> condicion = new List<string>();
-                SitioCentral st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.DeclaraVariables();
+                v.st.LeeEsquemaLocalizacion("Venta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
 
-                switch (tipoFragmento)
+                switch (v.tipoFragmento)
                 {
                     case "Horizontal":
 
@@ -874,14 +879,14 @@ namespace ProyectoBasesDeDatosDistribuidas
                         //Eliminar en ambos sitios
                         try
                         {
-                            if (sitios.ElementAt(0).Contains("1"))
+                            if (v.sitios.ElementAt(0).Contains("1"))
                             {
                                 //eliminar en sql server
-                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 //eliminar en postgressql
-                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                                 
                             }
@@ -889,11 +894,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                             {
 
                                 //eliminar en sql server
-                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 //eliminar en postgressql
-                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                          
                             }
@@ -907,11 +912,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                         break;
 
                     default:
-                        switch (sitios.ElementAt(0))
+                        switch (v.sitios.ElementAt(0))
                         {
                             case "1":
                                 //Insercion en sql server
-                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                         
@@ -921,7 +926,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                             case "2":
 
-                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                            
 
@@ -959,16 +964,11 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentos = new List<string>();
-                List<string> nombreTablaBDFragmento = new List<string>();
-                string nombreTablaGeneral = "";
-                string tipoFragmento = "";
-                List<string> sitios = new List<string>();
-                List<string> condicion = new List<string>();
-                SitioCentral st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Venta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.DeclaraVariables();
+                v.st.LeeEsquemaLocalizacion("Venta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
 
-                switch (tipoFragmento)
+                switch (v.tipoFragmento)
                 {
                     case "Horizontal":
                         //si es insercion se hace en el sitio de la condicion          
@@ -980,14 +980,14 @@ namespace ProyectoBasesDeDatosDistribuidas
                     case "Replica":
                         //modifcar en ambos sitios
 
-                        if (sitios.ElementAt(0).Contains("1"))
+                        if (v.sitios.ElementAt(0).Contains("1"))
                         {
                             //MODIFICACION en sql server
-                            string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                            string consulta = "UPDATE " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                             cmd = new SqlCommand(consulta, cnSQL);
                             cmd.ExecuteNonQuery();
                             //modificar en postgresql
-                            NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                            NpgsqlCommand command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                             command.ExecuteNonQuery();
                             cargaTabla();
                             limpiaCampos();
@@ -995,11 +995,11 @@ namespace ProyectoBasesDeDatosDistribuidas
                         else
                         {
                             //MODIFICACION en sql server
-                            string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                            string consulta = "UPDATE " + v.nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                             cmd = new SqlCommand(consulta, cnSQL);
                             cmd.ExecuteNonQuery();
                             //modificar en postgresql
-                            NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                            NpgsqlCommand command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                             command.ExecuteNonQuery();
                             cargaTabla();
                             limpiaCampos();
@@ -1008,11 +1008,11 @@ namespace ProyectoBasesDeDatosDistribuidas
 
 
                     default:
-                        switch (sitios.ElementAt(0))
+                        switch (v.sitios.ElementAt(0))
                         {
                             case "1":
                                 //Insercion en sql server
-                                string consultaS = "UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consultaS = "UPDATE " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consultaS, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -1023,7 +1023,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                             case "2":
 
-                                NpgsqlCommand commandS = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand commandS = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripción = '" + descripcion + "',fecha ='" + fecha + "' WHERE id_Venta = " + dataGridViewVenta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 commandS.ExecuteNonQuery();
                                 cargaTabla();
                                 limpiaCampos();

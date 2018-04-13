@@ -13,7 +13,7 @@ using NpgsqlTypes;
 
 namespace ProyectoBasesDeDatosDistribuidas
 {
-    class SitioCentral
+    public class SitioCentral
     {
         SqlConnection cnSitio1;
         SqlConnection cnSitioCentral;
