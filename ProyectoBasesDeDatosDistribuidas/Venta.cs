@@ -125,6 +125,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
                 //variables necesarias para sacar datos del esquema de localizacion
                 v = new VariablesNecesariasParaEsquemaLocalizacion();
+                v.DeclaraVariables();
                 v.st.LeeEsquemaLocalizacion("Producto", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
                 //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
                 cmd = new SqlCommand("Select nombre from "+v.nombreTablaBDFragmento.ElementAt(0)+" where id_Producto = '" + idProducto + "'", cnSQL);
@@ -476,9 +477,8 @@ namespace ProyectoBasesDeDatosDistribuidas
                 }
                 listBoxCarrito.ClearSelected();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
          
             }
             
@@ -708,7 +708,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                     {
                         foreach (string item in listaDeProductoActualizado)
                         {
-                            if (item.Split(',').ElementAt(2) != "0")
+                            if (item.Split(',').ElementAt(2) != "0")//si aun existen productos
                             {
                                 string consultaS = "UPDATE " + v.nombreTablaBDFragmento[0].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
                                 cmd = new SqlCommand(consultaS, cnSQL);
@@ -717,7 +717,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 command = new NpgsqlCommand("UPDATE " + v.nombreTablaBDFragmento[1].ToString() + " SET cantidad=" + item.Split(',').ElementAt(2) + "  WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
                                 command.ExecuteNonQuery();
                             }
-                            else
+                            else//so ya no existen productos se elimina
                             //se elimina el producto si se vendio toda la cantidad y SE ELIMINA LA OFERTA SI ES QUE EL PRODUCTO TIENE
                             {
                                 string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
@@ -727,9 +727,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[1].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
                                 command.ExecuteNonQuery();
 
-
-
-
+                                ChecaSiElProductoTieneOferta(item.Split(',').ElementAt(0));//se le manda el id del producto
                             }
                         }
 
@@ -758,7 +756,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 //modificar en postgresql
                                 command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
                                 command.ExecuteNonQuery();
-
+                                ChecaSiElProductoTieneOferta(item.Split(',').ElementAt(0));
                             }
                         }
 
@@ -786,6 +784,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                     string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "";
                                     cmd = new SqlCommand(consultaS, cnSQL);
                                     cmd.ExecuteNonQuery();
+                                    ChecaSiElProductoTieneOferta(item.Split(',').ElementAt(0));
                                 }
                             }
 
@@ -810,6 +809,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                     //modificar en postgresql
                                     command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_Producto = " + item.Split(',').ElementAt(0) + "", conNPG);
                                     command.ExecuteNonQuery();
+                                    ChecaSiElProductoTieneOferta(item.Split(',').ElementAt(0));
 
                                 }
                             }
@@ -820,6 +820,122 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
         
         
+        }
+        private void ChecaSiElProductoTieneOferta(string idProducto)
+        {
+
+            //eliminar la oferta si es q tenia producton
+            NpgsqlCommand command;
+            VariablesNecesariasParaEsquemaLocalizacion v = new VariablesNecesariasParaEsquemaLocalizacion();
+            v.DeclaraVariables();
+            v.st.LeeEsquemaLocalizacion("Oferta", ref v.idFragmentos, ref v.nombreTablaBDFragmento, ref v.nombreTablaGeneral, ref v.sitios, ref v.tipoFragmento, ref v.condicion);
+
+            switch (v.tipoFragmento)
+            {
+                case "Horizontal":
+
+                    break;
+                case "Vertical":
+
+                    break;
+                case "Replica":
+                    if (v.sitios.ElementAt(0).Contains("1"))//condicional para replica
+                    {
+                        //leemos si el id  del producto que se va a eliminar tiene oferta
+                        try//normalmente entrara al catch si el producto no tiene oferta
+                        {
+                            //leemos si el id  del producto que se va a eliminar tiene oferta
+                            cmd = new SqlCommand("Select id_Oferta from " + v.nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProducto + "'", cnSQL);
+                            dr = cmd.ExecuteReader();
+                            dr.Read();
+                            string idOferta = (dr[0]).ToString();
+                            dr.Close();
+                            //se hace la eliminacion de la oferta cuyo porducto se vendio todo
+                            string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[1].ToString() + " WHERE id_oferta = " + idOferta + "";
+                            cmd = new SqlCommand(consultaS, cnSQL);
+                            cmd.ExecuteNonQuery();
+                            //modificar en postgresql
+                            command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + "  WHERE id_oferta = " + idOferta + "", conNPG);
+                            command.ExecuteNonQuery();
+                
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                    }
+                    else//si comienza por el sitio2
+                    {
+                        //leemos si el id  del producto que se va a eliminar tiene oferta
+                        try//normalmente entrara al catch si el producto no tiene oferta
+                        {
+                            //leemos si el id  del producto que se va a eliminar tiene oferta
+                            cmd = new SqlCommand("Select id_Oferta from " + v.nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProducto + "'", cnSQL);
+                            dr = cmd.ExecuteReader();
+                            dr.Read();
+                            string idOferta = (dr[0]).ToString();
+                            dr.Close();
+                            //se hace la eliminacion de la oferta cuyo porducto se vendio todo
+                            string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_oferta = " + idOferta + "";
+                            cmd = new SqlCommand(consultaS, cnSQL);
+                            cmd.ExecuteNonQuery();
+                            //modificar en postgresql
+                            command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[1].ToString() + " WHERE id_oferta = " + idOferta + "", conNPG);
+                            command.ExecuteNonQuery();
+
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+
+                    break;
+                default://si no es de ningun tipo de fragmento
+                    switch (v.sitios.ElementAt(0))
+                    {
+                        case "1"://leemos si el id  del producto que se va a eliminar tiene oferta
+                            //leemos si el id  del producto que se va a eliminar tiene oferta
+                            try//normalmente entrara al catch si el producto no tiene oferta
+                            {
+                                //leemos si el id  del producto que se va a eliminar tiene oferta
+                                cmd = new SqlCommand("Select id_Oferta from " + v.nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProducto + "'", cnSQL);
+                                dr = cmd.ExecuteReader();
+                                dr.Read();
+                                string idOferta = (dr[0]).ToString();
+                                dr.Close();
+                                //se hace la eliminacion de la oferta cuyo porducto se vendio todo
+                                string consultaS = "DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_oferta = " + idOferta + "";
+                                cmd = new SqlCommand(consultaS, cnSQL);
+                                cmd.ExecuteNonQuery();
+                             
+                            }
+                            catch (Exception)
+                            {
+                            }
+                            break;
+
+                        case "2":
+                            //leemos si el id  del producto que se va a eliminar tiene oferta
+                            try//normalmente entrara al catch si el producto no tiene oferta
+                            {
+                                //leemos si el id  del producto que se va a eliminar tiene oferta
+                                cmd = new SqlCommand("Select id_Oferta from " + v.nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProducto + "'", cnSQL);
+                                dr = cmd.ExecuteReader();
+                                dr.Read();
+                                string idOferta = (dr[0]).ToString();
+                                dr.Close();
+                                //se hace la eliminacion de la oferta cuyo porducto se vendio todo
+                                command = new NpgsqlCommand("DELETE FROM " + v.nombreTablaBDFragmento[0].ToString() + " WHERE id_oferta = " + idOferta + "", conNPG);
+                                command.ExecuteNonQuery();
+
+                            }
+                            catch (Exception)
+                            {
+                            }
+                            break;
+                    }
+                    break;
+            }                        
         }
 
         private void dataGridViewVenta_CellClick(object sender, DataGridViewCellEventArgs e)
