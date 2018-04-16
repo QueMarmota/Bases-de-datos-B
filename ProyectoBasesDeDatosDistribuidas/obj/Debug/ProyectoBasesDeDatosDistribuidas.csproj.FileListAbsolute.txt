@@ -65,5 +65,4 @@ C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuid
 C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.Sucursal.resources
 C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.Venta.resources
 C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.csproj.GenerateResource.Cache
-C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.Login.resources
 C:\Users\rafael\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.csprojResolveAssemblyReference.cache
