@@ -21,7 +21,8 @@ namespace ProyectoBasesDeDatosDistribuidas
         SqlDataAdapter da; //select
         DataTable dt; //datos a tabla
         SqlDataReader dr;///le lo que devuelve la consulta
-
+        List<int> listPrimaryKeysProveedor;
+        List<string> listaOfertas = new List<string>();
         //Variables para postgres
         string parametros = "Server=localhost;Port=5432;User id=postgres;Password=root;Database=Sitio2";
         DataSet datos = new DataSet();
@@ -100,7 +101,23 @@ namespace ProyectoBasesDeDatosDistribuidas
             dataGridViewProveedor.Columns[0].Visible = false;                
         
         }
+        private int CalculaPrimaryKey()//Esta funcion busca la llave primaria mas grande y regresa un numero + 1 del numero ams grande para insertar una nueva llave primaria
+        {
+            try
+            {
+                int pKmax = listPrimaryKeysProveedor.Max();
+                int nuevaClave = pKmax + 1;
+                return nuevaClave;
+            }
+            catch (InvalidOperationException ex)
+            {
 
+                return 1;
+                
+                throw;
+            }
+           
+        }
         private void MezclaBDVertical()
         {
             /*CODIGO PARA ITERAR LAS CELDAS DE UN DATATABLE POR RENGLONES
@@ -120,7 +137,7 @@ namespace ProyectoBasesDeDatosDistribuidas
            */
             NpgsqlDataAdapter add;
             //codigo para hacer el select al sitio1
-            da = new SqlDataAdapter("Select * from Proveedor1", cnSQL);
+            da = new SqlDataAdapter("Select * from Proveedor1 ORDER BY id_Proveedor DESC", cnSQL);
             dt = new DataTable();
             da.Fill(dt);
             //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
@@ -128,7 +145,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
 
             //Codigo para hacer el select from a al sitio2             
-            add = new NpgsqlDataAdapter("select * from Proveedor2", conNPG);
+            add = new NpgsqlDataAdapter("select * from Proveedor2 ORDER BY id_Proveedor DESC", conNPG);
             //add.Fill(datos);
             dtNPG = new DataTable();
             add.Fill(dtNPG);
@@ -152,13 +169,20 @@ namespace ProyectoBasesDeDatosDistribuidas
            // dataGridViewProveedor.Columns[4].Visible = false;
 
             // go through each row
+            int contadorPK = 0;
+            listPrimaryKeysProveedor = new List<int>();
             foreach (DataRow dr in dt.Rows)
             {
                 // go through each column in the row
-                for (int i = dtNPG.Columns.Count; i < numberOfColumns-1; i++)//-2 por q adelante le sumo mas 2
+                for (int i = dtNPG.Columns.Count; i < numberOfColumns-1; i++)//-1 por q adelante le sumo mas 1
                 {
                     // access cell as set or get
                     var dato = dtNPG.Rows[contadorRows][(i - dtNPG.Columns.Count)];
+                    if (contadorPK == 0)//se agrega la llave primaria a la lista global para evaluar una autonumerica programada
+                    {
+                        listPrimaryKeysProveedor.Add(Convert.ToInt32(dato));
+                    }
+                    contadorPK++;
                      dr[i+1] = dato;//+| para evitar q copie el idproveedor de la base de datos de npg
                      //string something = Convert.ToString(dr[i+2]);
                 }
@@ -223,7 +247,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             string direccion = textBoxDireccion.Text;
             string email = textBoxEmail.Text;
             string tipo = comboBoxTipo.SelectedItem.ToString();
-            int idProveedor = Int32.Parse(textBoxidProveedor.Text);
+            int idProveedor = CalculaPrimaryKey();
             try
             {
             //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
@@ -301,7 +325,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
         private bool validaDatosEntrada()
         {
-            if (textBoxidProveedor.Text=="" ||textBoxNombre.Text == "" || textBoxDireccion.Text == "" || textBoxTelefono.Text == "" || textBoxEmail.Text == "" || comboBoxTipo.SelectedItem.ToString() == "")
+            if (textBoxNombre.Text == "" || textBoxDireccion.Text == "" || textBoxTelefono.Text == "" || textBoxEmail.Text == "" || comboBoxTipo.SelectedItem.ToString() == "")
             {
                 MessageBox.Show("Error de datos");
                 return false;
@@ -329,7 +353,132 @@ namespace ProyectoBasesDeDatosDistribuidas
            
 
         }
+        private void ChecaSiExisteOferta(string idProducto)
+        {
+            try
+            {
+                SqlDataReader dr;
+                //PARA CARGAR LISTA DE PRODUCTOS
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmento = new List<string>();
+                string nombreTablaGeneral = "";
+                string tipoFragmento = "";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Oferta", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                //carga lista de ofertas
+                SqlDataAdapter daOferta = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
+                DataTable dtOferta = new DataTable();
+                daOferta.Fill(dtOferta);
+                listaOfertas = new List<string>();
+                // For each row, print the values of each column.
+                //idOferta,descripcon,fecha,descuento,idProducto
+                foreach (DataRow row in dtOferta.Rows)
+                {
+                    listaOfertas.Add(row[dtOferta.Columns[0]].ToString() + "," + row[dtOferta.Columns[1]].ToString() + "," + row[dtOferta.Columns[2]].ToString() + "," + row[dtOferta.Columns[3]].ToString() + "," + row[dtOferta.Columns[4]].ToString());
+                }
 
+                List<string> existeOferta = listaOfertas.FindAll(x => x.Contains(idProducto));
+                string[] substringOferta;
+                if (existeOferta.Count == 0)//si el count es igual a 0 significa que ese producto no tiene oferta
+                {
+                    return;
+                }
+                else {
+                    substringOferta = existeOferta.ElementAt(0).Split(',');
+                }
+                switch (tipoFragmento)
+                {
+                    case "Horizontal":
+                        //si es insercion se hace en el sitio de la condicion          
+
+                        break;
+                    case "Vertical":
+
+                        break;
+                    case "Replica":
+                        //insertar en ambos sitios
+                        //si es insercion se hace en el sitio de la condicion
+                        try
+                        {
+                            if (sitios.ElementAt(0).Contains("1"))
+                            {
+                                //Insercion en sql server sitio1
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiarCampos();
+                                //fin de insercion
+
+                                //Insercion en NPG sitio2
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+                            else
+                            {
+                                //Insercion en sql server sitio1
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(1).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiarCampos();
+                                //fin de insercion
+
+                                //Insercion en NPG sitio2
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+                            }
+
+
+
+                        }
+                        catch (Exception error)
+                        {
+
+                            MessageBox.Show("ERROR al insertar : " + error.Message);
+                        }
+
+                        break;
+
+                    default:
+                        switch (sitios.ElementAt(0))
+                        {
+                            case "1":
+                                //Insercion en sql server
+                                string consulta = "DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "";
+                                cmd = new SqlCommand(consulta, cnSQL);
+                                cmd.ExecuteNonQuery();
+                                //cargaTabla();
+                               // limpiarCampos();
+
+                                break;
+
+
+                            case "2":
+
+                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento.ElementAt(0).ToString() + " WHERE id_Oferta = " + substringOferta.ElementAt(0) + "", conNPG);
+                                command.ExecuteNonQuery();
+                                cargaTabla();
+                                limpiarCampos();
+
+                                break;
+                        }
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+           
+            
+          
+        }
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
             
@@ -355,12 +504,151 @@ namespace ProyectoBasesDeDatosDistribuidas
                     case "Vertical":
                         try
                         {
+                            //Primero hay que checar si el provedor tiene productos registrados para evitar la entidad referencial
+                            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                            //variables necesarias para sacar datos del esquema de localizacion
+                            List<string> idFragmentosProducto = new List<string>();
+                            List<string> nombreTablaBDFragmentoProducto = new List<string>();
+                            string nombreTablaGeneralProducto = "";
+                            string tipoFragmentoProducto = "";
+                            List<string> sitiosProducto = new List<string>();
+                            List<string> condicionProducto = new List<string>();
+                            SitioCentral stProducto = new SitioCentral();
+                            stProducto.LeeEsquemaLocalizacion("Producto", ref idFragmentosProducto, ref nombreTablaBDFragmentoProducto, ref nombreTablaGeneralProducto, ref sitiosProducto, ref tipoFragmentoProducto, ref condicionProducto);
+
+                            switch (tipoFragmentoProducto)
+                            {
+                                case"Replica":
+
+                                    switch (sitiosProducto.ElementAt(0))
+                                    {
+
+                                        case "1":
+                                            //eliminar campos
+                                            SqlDataAdapter daProducto = new SqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(0) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", cnSQL);
+                                            DataTable dtProducto = new DataTable();
+                                            daProducto.Fill(dtProducto);
+                                            string dato = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProducto.Rows)
+                                            {
+                                                //esta funcion checa si el producto tiene oferta y si tiene la borra
+                                                string idProductoo = row[dtProducto.Columns[0]].ToString();
+                                                ChecaSiExisteOferta(row[dtProducto.Columns[0]].ToString());
+                                                dato = row[dtProducto.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                string consultaProd = "DELETE FROM " + nombreTablaBDFragmentoProducto[0].ToString() + " WHERE id_Producto = " + dato + "";
+                                                cmd = new SqlCommand(consultaProd, cnSQL);
+                                                cmd.ExecuteNonQuery();
+                                            }
+
+                                            //eliminar campos
+                                            NpgsqlDataAdapter daProductoNP = new NpgsqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(1) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", conNPG);
+                                            DataTable dtProductoNP = new DataTable();
+                                            daProductoNP.Fill(dtProductoNP);
+                                            string dat = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProductoNP.Rows)
+                                            {
+                                                //esta funcion checa si el producto tiene oferta y si tiene la borra
+                                                string idProductoo = row[dtProductoNP.Columns[0]].ToString();
+                                                ChecaSiExisteOferta(row[dtProductoNP.Columns[0]].ToString());
+                                                dat = row[dtProductoNP.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                NpgsqlCommand commandProd = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmentoProducto[1].ToString() + " WHERE id_Producto = " + dat + "", conNPG);
+                                                commandProd.ExecuteNonQuery();
+                                            }
+                                            break;
+                                        case "2":
+                                            //eliminar campos
+                                             daProducto = new SqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(1) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", cnSQL);
+                                             dtProducto = new DataTable();
+                                            daProducto.Fill(dtProducto);
+                                             dato = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProducto.Rows)
+                                            {
+                                                ChecaSiExisteOferta(row[dtProducto.Columns[0]].ToString());
+                                                dato = row[dtProducto.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                string consultaProd = "DELETE FROM " + nombreTablaBDFragmentoProducto[1].ToString() + " WHERE id_Producto = " + dato + "";
+                                                cmd = new SqlCommand(consultaProd, cnSQL);
+                                                cmd.ExecuteNonQuery();
+                                            }
+
+                                            //eliminar campos
+                                             daProductoNP = new NpgsqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(0) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", conNPG);
+                                             dtProductoNP = new DataTable();
+                                            daProductoNP.Fill(dtProductoNP);
+                                             dat = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProductoNP.Rows)
+                                            {
+                                                //esta funcion checa si el producto tiene oferta y si tiene la borra
+                                                ChecaSiExisteOferta(row[dtProducto.Columns[0]].ToString());
+                                                dat = row[dtProductoNP.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                NpgsqlCommand commandProd = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmentoProducto[0].ToString() + " WHERE id_Producto = " + dat + "", conNPG);
+                                                commandProd.ExecuteNonQuery();
+                                            }
+                                            break;
+                                  
+                                    }
+                                                             
+                                
+                                    break;
+                                default://si no tiene una fragmentacion
+                                    switch (sitiosProducto.ElementAt(0))//por si esta en el sitio 1 o 2
+                                    {
+
+                                        case "1":
+
+                                            //agregar campos
+                                            SqlDataAdapter daProducto = new SqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(0) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", cnSQL);
+                                            DataTable dtProducto = new DataTable();
+                                            daProducto.Fill(dtProducto);
+                                            string dato = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProducto.Rows)
+                                            {
+                                                ChecaSiExisteOferta(row[dtProducto.Columns[0]].ToString());
+                                                dato = row[dtProducto.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                string consultaProd = "DELETE FROM " + nombreTablaBDFragmentoProducto[0].ToString() + " WHERE id_Producto = " + dato + "";
+                                                cmd = new SqlCommand(consultaProd, cnSQL);
+                                                cmd.ExecuteNonQuery();
+                                            }
+
+                                            break;
+
+                                        case "2":
+                                            //agregar campos
+                                            NpgsqlDataAdapter daProductoNP = new NpgsqlDataAdapter("Select id_Producto from " + nombreTablaBDFragmentoProducto.ElementAt(0) + " where id_Proveedor = '" + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "'", conNPG);
+                                            DataTable dtProductoNP = new DataTable();
+                                            daProductoNP.Fill(dtProductoNP);
+                                            string dat = "";
+                                            // For each row, print the values of each column.
+                                            //Borrar los productos del proveedor que se va a borrar
+                                            foreach (DataRow row in dtProductoNP.Rows)
+                                            {
+                                                ChecaSiExisteOferta(row[dtProductoNP.Columns[0]].ToString());
+                                                dat = row[dtProductoNP.Columns[0]].ToString();//para todas las rows dame el dato de la columna posicion 1 osea el nombre de la sucursal
+                                                NpgsqlCommand commandProd = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmentoProducto[0].ToString() + " WHERE id_Producto = " + dat + "", conNPG);
+                                                commandProd.ExecuteNonQuery();
+                                            }
+                                            break;
+
+                                    }
+                                    break;
+                            }
+
+                           
                             //eliminar en sql server
                             string consulta = "DELETE FROM " + nombreTablaBDFragmento[0].ToString() + " WHERE id_Proveedor = " + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "";
                             cmd = new SqlCommand(consulta, cnSQL);
                             cmd.ExecuteNonQuery();
                             //eliminar en postgressql
-                            NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento[1].ToString() + " WHERE id_Proveedor = " + dataGridViewProveedor.CurrentRow.Cells[4].Value.ToString() + "", conNPG);
+                            NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + nombreTablaBDFragmento[1].ToString() + " WHERE id_Proveedor = " + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                             command.ExecuteNonQuery();
                             cargaTabla();
                             limpiarCampos();
@@ -428,7 +716,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                         cmd = new SqlCommand(consulta, cnSQL);
                         cmd.ExecuteNonQuery();
                         //modificar en postgresql
-                        NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento[1].ToString() + " SET direccion = '" + direccion + "', tipo = '" +tipo + "' WHERE id_Proveedor = " + dataGridViewProveedor.CurrentRow.Cells[4].Value.ToString() + "", conNPG);
+                        NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento[1].ToString() + " SET direccion = '" + direccion + "', tipo = '" +tipo + "' WHERE id_Proveedor = " + dataGridViewProveedor.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                         command.ExecuteNonQuery();
                         cargaTabla();
                         limpiarCampos();
@@ -448,7 +736,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
             catch (Exception ex)
             {
-                Console.WriteLine("no se inserto" + ex.Message);
+                Console.WriteLine("no se modifico" + ex.Message);
             }
 
         }

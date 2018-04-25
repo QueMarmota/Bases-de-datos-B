@@ -181,6 +181,7 @@
             this.label1.Size = new System.Drawing.Size(70, 13);
             this.label1.TabIndex = 14;
             this.label1.Text = "id_Proveedor";
+            this.label1.Visible = false;
             // 
             // textBoxidProveedor
             // 
@@ -188,6 +189,7 @@
             this.textBoxidProveedor.Name = "textBoxidProveedor";
             this.textBoxidProveedor.Size = new System.Drawing.Size(276, 20);
             this.textBoxidProveedor.TabIndex = 15;
+            this.textBoxidProveedor.Visible = false;
             // 
             // Proveedor
             // 

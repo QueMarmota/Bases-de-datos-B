@@ -17,6 +17,7 @@ namespace ProyectoBasesDeDatosDistribuidas
     {
         //lista que contiene el id_proveedor y nombre
         List<string> listaidProvyNombre = new List<string>();
+        List<int> listPrimaryKeysProducto;
 
         //varaibles para sql
         SqlConnection cnSQL; //conexion

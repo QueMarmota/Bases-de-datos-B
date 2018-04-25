@@ -94,7 +94,8 @@ namespace ProyectoBasesDeDatosDistribuidas
         }
         private int ChecaSiExisteOfertaYRegresaDescuento(string productoAChecar)
         {
-
+            SqlDataReader dr;
+            
             //PARA CARGAR LISTA DE PRODUCTOS
             //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
             //variables necesarias para sacar datos del esquema de localizacion
@@ -314,17 +315,18 @@ namespace ProyectoBasesDeDatosDistribuidas
                         }
                         //codigo para saber si el producto tiene DESCUENTO
                         int descuento = ChecaSiExisteOfertaYRegresaDescuento(productoEnCarrito);
-                
+
                         if (descuento != -1)//si tiene descuento
                         {
                             //codigo para aumentar total con descuento
-                            total += (Convert.ToDecimal(arraytemp2[2])*descuento)/100;
+                            total += Convert.ToDecimal(arraytemp2[2]) - ((Convert.ToDecimal(arraytemp2[2]) * descuento) / 100);
                         }
                         else
                         {
                             //codigo para aumentar total
                             total += Convert.ToDecimal(arraytemp2[2]);
                         }
+
                         //richTextBoxTotal.SelectionColor = Color.Lime;
 
                         //richTextBoxTotal.SelectionFont = new Font("Verdana", 15, FontStyle.Regular);
@@ -356,7 +358,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                         if (descuento != -1)//si tiene descuento
                         {
                             //codigo para aumentar total con descuento
-                            total += (Convert.ToDecimal(arraytemp[2]) * descuento) / 100;
+                            total += Convert.ToDecimal(arraytemp[2])-((Convert.ToDecimal(arraytemp[2]) * descuento) / 100);
                         }
                         else
                         {
@@ -382,7 +384,10 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
             catch (Exception)
             {
-                
+                if (dr!=null)
+                {
+                    dr.Close();
+                }
               
             }
             
@@ -461,7 +466,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                         if (descuento != -1)//si tiene descuento
                         {
                             //codigo para aumentar total con descuento
-                            total -= (Convert.ToDecimal(arraytemp[2])*descuento) / 100;
+                            total -= Convert.ToDecimal(arraytemp[2])-((Convert.ToDecimal(arraytemp[2])*descuento) / 100);
 
                         }
                         else
