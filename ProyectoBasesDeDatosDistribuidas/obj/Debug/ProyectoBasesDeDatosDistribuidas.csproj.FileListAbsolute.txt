@@ -83,3 +83,8 @@ C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesD
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.Venta.resources
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.csproj.GenerateResource.Cache
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.csprojResolveAssemblyReference.cache
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\bin\Debug\itextsharp.dll
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\bin\Debug\itextsharp.pdfa.dll
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\bin\Debug\itextsharp.xtra.dll
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\bin\Debug\itextsharp.xml
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.FormReporteFiltro.resources

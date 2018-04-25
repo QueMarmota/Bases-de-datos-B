@@ -63,6 +63,13 @@ namespace ProyectoBasesDeDatosDistribuidas
             prod.ShowDialog();
         }
 
+        private void btn_reporte_Click(object sender, EventArgs e)
+        {
+            FormReporteFiltro reporte = new FormReporteFiltro();
+            reporte.Show();
+
+        }
+
    
 
     }

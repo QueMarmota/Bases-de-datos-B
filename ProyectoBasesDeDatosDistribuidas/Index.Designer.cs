@@ -35,6 +35,7 @@
             this.BtnVenta = new System.Windows.Forms.Button();
             this.BtnOferta = new System.Windows.Forms.Button();
             this.BtnProducto = new System.Windows.Forms.Button();
+            this.btn_reporte = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BtnEmpleado
@@ -98,6 +99,16 @@
             this.BtnProducto.UseVisualStyleBackColor = true;
             this.BtnProducto.Click += new System.EventHandler(this.BtnProducto_Click);
             // 
+            // btn_reporte
+            // 
+            this.btn_reporte.Location = new System.Drawing.Point(53, 117);
+            this.btn_reporte.Name = "btn_reporte";
+            this.btn_reporte.Size = new System.Drawing.Size(75, 23);
+            this.btn_reporte.TabIndex = 6;
+            this.btn_reporte.Text = "Reporte";
+            this.btn_reporte.UseVisualStyleBackColor = true;
+            this.btn_reporte.Click += new System.EventHandler(this.btn_reporte_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -105,6 +116,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(686, 360);
+            this.Controls.Add(this.btn_reporte);
             this.Controls.Add(this.BtnProducto);
             this.Controls.Add(this.BtnOferta);
             this.Controls.Add(this.BtnVenta);
@@ -128,6 +140,7 @@
         private System.Windows.Forms.Button BtnVenta;
         private System.Windows.Forms.Button BtnOferta;
         private System.Windows.Forms.Button BtnProducto;
+        private System.Windows.Forms.Button btn_reporte;
     }
 }
 
