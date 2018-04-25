@@ -99,7 +99,7 @@
             // dataGridViewSucursal
             // 
             this.dataGridViewSucursal.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewSucursal.Location = new System.Drawing.Point(47, 242);
+            this.dataGridViewSucursal.Location = new System.Drawing.Point(51, 263);
             this.dataGridViewSucursal.Name = "dataGridViewSucursal";
             this.dataGridViewSucursal.Size = new System.Drawing.Size(515, 150);
             this.dataGridViewSucursal.TabIndex = 6;
@@ -107,7 +107,7 @@
             // 
             // BtnInsertar
             // 
-            this.BtnInsertar.Location = new System.Drawing.Point(76, 415);
+            this.BtnInsertar.Location = new System.Drawing.Point(80, 436);
             this.BtnInsertar.Name = "BtnInsertar";
             this.BtnInsertar.Size = new System.Drawing.Size(75, 23);
             this.BtnInsertar.TabIndex = 7;
@@ -117,7 +117,7 @@
             // 
             // BtnModificar
             // 
-            this.BtnModificar.Location = new System.Drawing.Point(253, 415);
+            this.BtnModificar.Location = new System.Drawing.Point(257, 436);
             this.BtnModificar.Name = "BtnModificar";
             this.BtnModificar.Size = new System.Drawing.Size(75, 23);
             this.BtnModificar.TabIndex = 8;
@@ -127,7 +127,7 @@
             // 
             // BtnEliminar
             // 
-            this.BtnEliminar.Location = new System.Drawing.Point(434, 415);
+            this.BtnEliminar.Location = new System.Drawing.Point(438, 436);
             this.BtnEliminar.Name = "BtnEliminar";
             this.BtnEliminar.Size = new System.Drawing.Size(75, 23);
             this.BtnEliminar.TabIndex = 9;

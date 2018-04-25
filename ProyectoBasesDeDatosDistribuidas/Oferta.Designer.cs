@@ -40,6 +40,7 @@
             this.BtnEliminar = new System.Windows.Forms.Button();
             this.id_Producto = new System.Windows.Forms.Label();
             this.comboBoxidProducto = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericDescuento)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOferta)).BeginInit();
             this.SuspendLayout();
@@ -88,7 +89,7 @@
             // 
             // numericDescuento
             // 
-            this.numericDescuento.Location = new System.Drawing.Point(167, 127);
+            this.numericDescuento.Location = new System.Drawing.Point(184, 127);
             this.numericDescuento.Name = "numericDescuento";
             this.numericDescuento.Size = new System.Drawing.Size(120, 20);
             this.numericDescuento.TabIndex = 5;
@@ -150,11 +151,21 @@
             this.comboBoxidProducto.TabIndex = 11;
             this.comboBoxidProducto.Enter += new System.EventHandler(this.comboBoxidProducto_Enter);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(164, 129);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(15, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "%";
+            // 
             // Oferta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(530, 466);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxidProducto);
             this.Controls.Add(this.id_Producto);
             this.Controls.Add(this.BtnEliminar);
@@ -192,5 +203,6 @@
         private System.Windows.Forms.Button BtnEliminar;
         private System.Windows.Forms.Label id_Producto;
         private System.Windows.Forms.ComboBox comboBoxidProducto;
+        private System.Windows.Forms.Label label1;
     }
 }
