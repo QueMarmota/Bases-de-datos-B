@@ -58,17 +58,5 @@ CREATE TABLE Detalle_Venta2(
 	CONSTRAINT fk_Venta FOREIGN KEY(id_Venta)
 	REFERENCES Venta2(id_Venta)
 );
-DROP TABLE Suministra2
-CREATE TABLE Suministra2(
-
-	id_Suministra BIGSERIAL NOT NULL,
-	id_Sucursal INT8 NOT NULL,
-	id_Proveedor INT8 NOT NULL,
-	CONSTRAINT pk_Suministra PRIMARY KEY(id_Suministra),
-	CONSTRAINT fk_Proveedor FOREIGN KEY(id_Proveedor)
-	REFERENCES Proveedor2(id_Proveedor)
-
-
-)
 
 

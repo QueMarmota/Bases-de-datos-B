@@ -81,3 +81,18 @@ CREATE TABLE Tiene_Of1
 		CONSTRAINT fk_Producto FOREIGN KEY(id_Producto)
 	REFERENCES Producto1(id_Producto)
 );
+DROP TABLE Suministra1
+CREATE TABLE Suministra1(
+
+	id_Suministra BIGINT IDENTITY(1,1) NOT NULL,
+	id_Sucursal BIGINT NOT NULL,
+	id_Proveedor BIGINT NOT NULL,
+	CONSTRAINT pk_Suministra PRIMARY KEY(id_Suministra),
+	CONSTRAINT fk_ProveedorSuministra FOREIGN KEY(id_Proveedor)
+	REFERENCES Proveedor1(id_Proveedor),
+	CONSTRAINT fk_SucursalSuministra FOREIGN KEY(id_Sucursal)
+	REFERENCES Sucursal1(id_Sucursal)
+
+
+)
+
