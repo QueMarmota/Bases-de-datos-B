@@ -64,11 +64,23 @@
     <Compile Include="Empleado.Designer.cs">
       <DependentUpon>Empleado.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormReporteFiltro.cs">
+    <Compile Include="FormReporteEmpleadoFiltro.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormReporteFiltro.Designer.cs">
-      <DependentUpon>FormReporteFiltro.cs</DependentUpon>
+    <Compile Include="FormReporteEmpleadoFiltro.Designer.cs">
+      <DependentUpon>FormReporteEmpleadoFiltro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="formReporteFactura.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="formReporteFactura.Designer.cs">
+      <DependentUpon>formReporteFactura.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormReporteProveedor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormReporteProveedor.Designer.cs">
+      <DependentUpon>FormReporteProveedor.cs</DependentUpon>
     </Compile>
     <Compile Include="Index.cs">
       <SubType>Form</SubType>
@@ -112,8 +124,14 @@
     <EmbeddedResource Include="Empleado.resx">
       <DependentUpon>Empleado.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormReporteFiltro.resx">
-      <DependentUpon>FormReporteFiltro.cs</DependentUpon>
+    <EmbeddedResource Include="FormReporteEmpleadoFiltro.resx">
+      <DependentUpon>FormReporteEmpleadoFiltro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="formReporteFactura.resx">
+      <DependentUpon>formReporteFactura.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormReporteProveedor.resx">
+      <DependentUpon>FormReporteProveedor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Index.resx">
       <DependentUpon>Index.cs</DependentUpon>

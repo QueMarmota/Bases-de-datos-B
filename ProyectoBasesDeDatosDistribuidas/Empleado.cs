@@ -173,21 +173,32 @@ namespace ProyectoBasesDeDatosDistribuidas
                 string hora_Entrada = dateTimePickerHoraEntrada.Value.ToString("hh:mm:ss");
                 string hora_Salida = dateTimePickerHoraSalida.Value.ToString("hh:mm:ss");
                 string genero = (radioButtonFemenino.Checked == true) ? "F" : "M";
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmento = new List<string>();
+                string nombreTablaGeneral="" ;
+                string tipoFragmento="";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();               
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Sucursal", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+               
                 //codigo para convertir internamente el nombre de la sucursal al id de la sucursal
-                SqlDataAdapter idSucursal = new SqlDataAdapter("Select id_Sucursal from Sucursal1 where nombre = '" + comboBoxidSucursal.Text + "'", cnSQL);
-                cmd = new SqlCommand("Select id_Sucursal from Sucursal1 where nombre = '" + comboBoxidSucursal.Text + "'", cnSQL);
+                SqlDataAdapter idSucursal = new SqlDataAdapter("Select id_Sucursal from " + nombreTablaBDFragmento[0] + " where nombre = '" + comboBoxidSucursal.Text + "'", cnSQL);
+                cmd = new SqlCommand("Select id_Sucursal from " + nombreTablaBDFragmento[0] + " where nombre = '" + comboBoxidSucursal.Text + "'", cnSQL);
                 dr = cmd.ExecuteReader();
                 dr.Read();
                 int idSuc= (Convert.ToInt32(dr[0]));
                 //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
-                    //variables necesarias para sacar datos del esquema de localizacion
-                    List<string> idFragmentos = new List<string>();
-                    List<string> nombreTablaBDFragmento = new List<string>();
-                    string nombreTablaGeneral="" ;
-                    string tipoFragmento="";
-                    List<string> sitios = new List<string>();
-                    List<string> condicion = new List<string>();               
-                SitioCentral st = new SitioCentral();
+                //variables necesarias para sacar datos del esquema de localizacion
+                idFragmentos = new List<string>();
+                nombreTablaBDFragmento = new List<string>();
+                nombreTablaGeneral="" ;
+                tipoFragmento="";
+                sitios = new List<string>();
+                condicion = new List<string>();               
+                st = new SitioCentral();
                 st.LeeEsquemaLocalizacion("Empleado", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
                //validacion de datos obtenidos
                 //Juntamos los datos en renglones

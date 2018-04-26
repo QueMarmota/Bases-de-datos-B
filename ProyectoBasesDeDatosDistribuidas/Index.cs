@@ -65,9 +65,22 @@ namespace ProyectoBasesDeDatosDistribuidas
 
         private void btn_reporte_Click(object sender, EventArgs e)
         {
-            FormReporteFiltro reporte = new FormReporteFiltro();
-            reporte.Show();
+            FormReporteEmpleadoFiltro reporte = new FormReporteEmpleadoFiltro();
+            reporte.ShowDialog();
 
+        }
+
+        private void btn_ReporteProveedor_Click(object sender, EventArgs e)
+        {
+            FormReporteProveedor reporte = new FormReporteProveedor();
+            reporte.ShowDialog();
+        }
+
+        private void btn_Factura_Click(object sender, EventArgs e)
+        {
+            formReporteFactura factura = new formReporteFactura();
+            factura.ShowDialog();
+           // factura.Hide();
         }
 
    
