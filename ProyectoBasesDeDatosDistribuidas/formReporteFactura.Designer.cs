@@ -74,6 +74,7 @@
             this.btn_Genera.TabIndex = 11;
             this.btn_Genera.Text = "Genera Reporte";
             this.btn_Genera.UseVisualStyleBackColor = true;
+            this.btn_Genera.Click += new System.EventHandler(this.btn_Genera_Click);
             // 
             // label1
             // 
@@ -97,7 +98,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(531, 383);
+            this.ClientSize = new System.Drawing.Size(368, 307);
             this.Controls.Add(this.dataGridViewVenta);
             this.Controls.Add(this.dataGridViewProducto);
             this.Controls.Add(this.listBoxVenta);

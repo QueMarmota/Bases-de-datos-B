@@ -14,12 +14,13 @@ using NpgsqlTypes;
 using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Security.Cryptography;
 
 namespace ProyectoBasesDeDatosDistribuidas
 {
     public partial class formReporteFactura : Form
     {
-
+        List<object> datosParaPdf = new List<object>();
         List<int> listPrimaryKeysProveedor;
         string[] TuplaPDFProveedor = new string[1];
         List<string[]> listaProductosDelProveedor = new List<string[]>();
@@ -467,27 +468,107 @@ namespace ProyectoBasesDeDatosDistribuidas
             try
             {
                 //obtener la tupla para el proveedor
+                datosParaPdf = new List<object>();
                 TuplaPDFProveedor = new string[1];
                 listaProductosDelProveedor.Clear();
+                string nombreDeLosProveedores = "";//<---------------------------------------------------------Datos para pdf
+                string fechaVenta = "";//<---------------------------------------------------------------------DATO PARA PDF
+                string DescripcionVenta = "";//<---------------------------------------------------------------DATO PARA PDF
+                List<string> listapreciosProductos = new List<string>();
+                List<string> listaidProveedoresDelProductoEnVenta = new List<string>();
+                string totalDeVenta = "";//<--------------------------------------------------------------------DATO PARA PDF
                 string datoVenta = listBoxVenta.Items[listBoxVenta.SelectedIndex].ToString();
                 string[] cadtemp = datoVenta.Split(' ');//cadtem[4] tieme el id de la venta el cul se buscara en id producto
-                string[] tupla = ProductoEnLista.Find(x => x.Contains(cadtemp[4])).Split(',');//regresa el proveedor con todos sus datos necesarios
-                TuplaPDFProveedor = tupla;//tenemos la tupla del proveedor del cual se vendieron sus productos
-                //buscar los productos de ese proveedor
+                string[] tuplaVenta = VentaEnLista.Find(x => x.Contains(cadtemp[4])).Split(',');//regresa el proveedor con todos sus datos necesarios
+                totalDeVenta = tuplaVenta[tuplaVenta.Length-1].ToString() + " pesos";
+                DescripcionVenta = tuplaVenta[2].ToString();
+                fechaVenta = tuplaVenta[1].ToString().Substring(0,11);
+                string productoEnVenta="";
+                //siclo para obtener producto y cant
+                for (int i = 3; i < tuplaVenta.Length-2; i++)
+                {
+                    productoEnVenta += tuplaVenta[i].ToString()+",";
+                }
+                productoEnVenta= productoEnVenta.Remove(productoEnVenta.LastIndexOf(','));//quitamos la ultima ,
+                string[] productosEnVentaArray = productoEnVenta.Split(',');//variable con productos y cantidad pero en arreglo
+                string[] arregloparaobtenerlacantidaddeproductos = new string[productosEnVentaArray.Length];//variable unicamente con la cantidad del producto<------------------------------para pdf
+                string[] arregloProductos = new string[productosEnVentaArray.Length];//variable unicamente con el nombre del producto------------------------------------------para pdf
+                int cont = 0;
+                int canditadTotalDeProductos = 0;
+                foreach (var item in productosEnVentaArray)
+                {
+                    arregloparaobtenerlacantidaddeproductos[cont] = item.Split('x').ElementAt(1);
+                    arregloProductos[cont] = item.Split('x').ElementAt(0);
+                    canditadTotalDeProductos += Convert.ToInt32(arregloparaobtenerlacantidaddeproductos[cont].ToString());//<---------------------------------------DATO PARA EL PDF
+                    cont++;
+                }
+                
+                
+                TuplaPDFProveedor = tuplaVenta;//tenemos la tupla del proveedor del cual se vendieron sus productos
+                //buscar los productos de esa venta y una vez obtenidos los productos tener el id del proveedor y su nombre
                 foreach (DataGridViewRow row in dataGridViewProducto.Rows)
                 {
                     //if para evitar que se meta cuando es null
                     if (row.Cells[1].Value != null)
                     {
-                        //si el producto es del proveedor que se le hara el reporte
-                        if (row.Cells[5].Value.ToString().Contains(TuplaPDFProveedor[0]))
+                        //for que itera el arreglo productos para encontrar el producto igual en el data grid que en el arreglo
+                        for (int i = 0; i < arregloProductos.Length; i++)
                         {
-                            string dato = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";
-                            listaProductosDelProveedor.Add(dato.Split(','));//se agrega el producto a la lista
+                            String cadDatagrid = row.Cells[1].Value.ToString();                            
+                            String cadArray = arregloProductos[i].ToString();
+                           // bool equal = String.Equals(cadDatagrid, cadArray, StringComparison.CurrentCultureIgnoreCase);
+                            if (cadDatagrid.Contains(cadArray.Substring(0,cadArray.Length-1)))
+                            {
+                                
+                                string tuplaProducto = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";                                
+                                //con la tupla del producto buscar el proveedor de ese producto y agregarlo a la lista
+                                string cadTemporal =tuplaProducto.Split(',').ElementAt(5);
+                                string tuplaProveedor=ProveedorEnLista.Find(x => x.Split(',').ElementAt(0).Contains(cadTemporal));//obtenemos la tupla del proveedor con ese producto
+                                nombreDeLosProveedores += tuplaProveedor.Split(',').ElementAt(1).ToString()+",";
+                            }
                         }
+                       
                     }
                 }
+                string[] arreglopreciosProducto = new string[productosEnVentaArray.Length];//<------------------------DATO PARA PDF----------------------------------------------
+                //Buscar los precios de los productos
+                int contadorPrecios = 0;
+                for (int i = 0; i < arregloProductos.Length; i++)
+                {
+                    //if para evitar que se meta cuando es null
+                    foreach (DataGridViewRow row in dataGridViewProducto.Rows)
+                    {
+                        if (row.Cells[1].Value != null)
+                        {
+                            String cadDatagrid = row.Cells[1].Value.ToString();
+                            String cadArray = arregloProductos[i].ToString();
+                            // bool equal = String.Equals(cadDatagrid, cadArray, StringComparison.CurrentCultureIgnoreCase);
+                            if (cadDatagrid.Contains(cadArray.Substring(0, cadArray.Length - 1)))
+                            {
 
+                                string tuplaProducto = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";
+                                //con la tupla del producto buscar el proveedor de ese producto y agregarlo a la lista
+                                string cadTemporal = tuplaProducto.Split(',').ElementAt(2);
+                                arreglopreciosProducto[contadorPrecios] = cadTemporal;
+                                contadorPrecios++;
+                            }
+                        }
+
+                    }
+                }//fin for
+                //quitar los repetidos en nombre de los proveedores
+                string[] arraytemp = nombreDeLosProveedores.Split(',');
+                arraytemp = arraytemp.Distinct().ToArray();
+                nombreDeLosProveedores = string.Join(",", arraytemp);
+                //agregar los datos necesarios para generar el pdf a una lista generica global
+                datosParaPdf.Add(arreglopreciosProducto);
+                datosParaPdf.Add(canditadTotalDeProductos);
+                datosParaPdf.Add(arregloparaobtenerlacantidaddeproductos);
+                datosParaPdf.Add(arregloProductos);
+                datosParaPdf.Add(totalDeVenta);
+                datosParaPdf.Add(DescripcionVenta);
+                datosParaPdf.Add(fechaVenta);
+                datosParaPdf.Add(nombreDeLosProveedores);
             }
             catch (System.Exception ex)
             {
@@ -495,5 +576,144 @@ namespace ProyectoBasesDeDatosDistribuidas
 
             }
         }
+
+        private void btn_Genera_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (datosParaPdf.Count == 0)
+                {
+                    MessageBox.Show("venta aun no seleccionada"); return;
+                }
+                int totalProductos = 0;
+                Document doc = new Document(iTextSharp.text.PageSize.LETTER, 10, 10, 42, 35);
+                PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("../../../Reporte-Factura.pdf", FileMode.Create));
+                doc.Open();
+                //codigo para agregar bordes de pagina al pdf
+                var content = wri.DirectContent;
+                var pageBorderRect = new iTextSharp.text.Rectangle(doc.PageSize);
+
+                pageBorderRect.Left += doc.LeftMargin;
+                pageBorderRect.Right -= doc.RightMargin;
+                pageBorderRect.Top -= doc.TopMargin;
+                pageBorderRect.Bottom += doc.BottomMargin;
+
+                content.SetColorStroke(BaseColor.BLACK);
+                content.Rectangle(pageBorderRect.Left, pageBorderRect.Bottom, pageBorderRect.Width, pageBorderRect.Height + 30);
+                content.Stroke();
+
+                //Para agregar imagen
+                iTextSharp.text.Image PNG = iTextSharp.text.Image.GetInstance("../../../logo.jpg");
+                PNG.ScalePercent(25f);
+                //para posicion
+                //PNG.SetAbsolutePosition(doc.PageSize.Width - 36f - 40f, doc.PageSize.Height - 36f - 50f);
+                PNG.SetAbsolutePosition(50, 700);
+                //para agregar un borde a la imagen
+                PNG.Border = iTextSharp.text.Rectangle.BOX;
+                PNG.BorderColor = iTextSharp.text.BaseColor.BLACK;
+                PNG.BorderWidth = 5f;
+                doc.Add(PNG);
+
+
+                //write some content   
+                Random rnd = new Random();
+                int numfact = rnd.Next(100, 1001); 
+                Random random = new Random();                                
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                string cadena = new string(Enumerable.Repeat(chars, 5)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+                string idfactura = cadena + "-" + numfact;
+                Phrase ph = new Phrase("                                                                                      Numero de factura : " + idfactura);
+                Paragraph p = new Paragraph(ph);
+                p.Alignment = Element.ALIGN_LEFT;                
+                p.IndentationLeft = 120;
+                //se agrega nombre
+                p.IndentationLeft = 50;
+                ph = new Phrase("\n\r \n\r      Nombre de proveedores : ");
+                Chunk chunk = new Chunk(datosParaPdf.ElementAt(7).ToString(), FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));                
+                p.Add(ph);
+                p.Add((new Chunk(chunk)));
+                //se agrega fecha venta
+                p.IndentationLeft = 50;
+                ph = new Phrase("    Fecha de venta : ");
+                chunk = new Chunk(datosParaPdf.ElementAt(6).ToString(), FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                p.Add(ph);
+                p.Add((new Chunk(chunk)));
+                ph = new Phrase(" \n\r \n\r");              
+                p.Add(ph);
+                doc.Add(p);
+
+                PdfPTable table = new PdfPTable(3);//el 3 es el numero de columnas
+                //para header
+                PdfPCell cell = new PdfPCell(new Phrase("Nombre Producto", new iTextSharp.text.Font(iTextSharp.text.Font.NORMAL, 14F, iTextSharp.text.Font.NORMAL, iTextSharp.text.BaseColor.BLACK)));
+                cell.Colspan = 1;
+                cell.HorizontalAlignment = 1;//0 left , 1 center , 2right
+                table.AddCell(cell);
+                //para header
+                cell = new PdfPCell(new Phrase("Cantidad", new iTextSharp.text.Font(iTextSharp.text.Font.NORMAL, 14F, iTextSharp.text.Font.NORMAL, iTextSharp.text.BaseColor.BLACK)));
+                cell.Colspan = 1;
+                cell.HorizontalAlignment = 1;//0 left , 1 center , 2right
+                table.AddCell(cell);
+                //para header
+                cell = new PdfPCell(new Phrase("Precio", new iTextSharp.text.Font(iTextSharp.text.Font.NORMAL, 14F, iTextSharp.text.Font.NORMAL, iTextSharp.text.BaseColor.BLACK)));
+                cell.Colspan = 1;
+                cell.HorizontalAlignment = 1;//0 left , 1 center , 2right
+                table.AddCell(cell);
+                //estructura de datosparapdf
+                //arrayprecio , cantidadtotalproudctos,cantidadde1producto,productos,totaldevental,descripcion,fecha,nombreproveedores
+               
+                //codigo para convertir de object a string[]
+                object[] res = datosParaPdf.ElementAt(3) as object[];      
+                string[] nombreProductos = res.OfType<string>().ToArray();
+                res = datosParaPdf.ElementAt(0) as object[];
+                string[] precioproductos = res.OfType<string>().ToArray();
+                res = datosParaPdf.ElementAt(2) as object[];
+                string[] cantidadde1producto = res.OfType<string>().ToArray();
+
+                //se rellana los campos de la tabla
+                for (int i = 0; i < nombreProductos.Length; i++)
+                {
+                    table.AddCell(nombreProductos[i]);
+                    table.AddCell(cantidadde1producto[i]);
+                    table.AddCell("$"+precioproductos[i]);
+                }
+ 
+
+                doc.Add(table);
+
+                //agregar Descripcion de venta
+                p.Clear();
+                ph = new Phrase("\n\r Descripcion de venta : ");
+                p.Add(ph);
+                chunk = new Chunk("" + datosParaPdf.ElementAt(5).ToString() + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                p.Add((new Chunk(chunk)));
+                //agregar total de productos
+                ph = new Phrase("\n\r \n\r   Total de productos : ");
+                p.Add(ph);
+                chunk = new Chunk("" + datosParaPdf.ElementAt(1).ToString() + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                p.Add((new Chunk(chunk)));
+                //agregar total de venta
+                ph = new Phrase("                                                Total de venta : ");
+                p.Add(ph);
+                chunk = new Chunk("" + datosParaPdf.ElementAt(4).ToString() + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                p.Add((new Chunk(chunk)));
+
+
+
+                doc.Add(p);
+
+                doc.Close();
+                System.Diagnostics.Process.Start("..\\..\\..\\Reporte-Factura.pdf");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            }
+        }
+    
+    
+    
     }
 }
