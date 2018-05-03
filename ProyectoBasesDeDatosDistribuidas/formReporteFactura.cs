@@ -517,7 +517,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                             String cadDatagrid = row.Cells[1].Value.ToString();                            
                             String cadArray = arregloProductos[i].ToString();
                            // bool equal = String.Equals(cadDatagrid, cadArray, StringComparison.CurrentCultureIgnoreCase);
-                            if (cadDatagrid.Contains(cadArray.Substring(0,cadArray.Length-1)))
+                            if (cadDatagrid.Contains(cadArray.Substring(0,2)))
                             {
                                 
                                 string tuplaProducto = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";                                
@@ -543,7 +543,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                             String cadDatagrid = row.Cells[1].Value.ToString();
                             String cadArray = arregloProductos[i].ToString();
                             // bool equal = String.Equals(cadDatagrid, cadArray, StringComparison.CurrentCultureIgnoreCase);
-                            if (cadDatagrid.Contains(cadArray.Substring(0, cadArray.Length - 1)))
+                            if (cadDatagrid.Contains(cadArray.Substring(0, cadArray.Length-2)))
                             {
 
                                 string tuplaProducto = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";

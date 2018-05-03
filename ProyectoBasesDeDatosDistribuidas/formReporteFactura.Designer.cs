@@ -98,7 +98,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(368, 307);
+            this.ClientSize = new System.Drawing.Size(371, 307);
             this.Controls.Add(this.dataGridViewVenta);
             this.Controls.Add(this.dataGridViewProducto);
             this.Controls.Add(this.listBoxVenta);

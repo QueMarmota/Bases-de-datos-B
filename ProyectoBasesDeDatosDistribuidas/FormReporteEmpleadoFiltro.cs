@@ -227,9 +227,10 @@ namespace ProyectoBasesDeDatosDistribuidas
                 chunk = new Chunk("" + TuplaPDF[4] + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
                 p.Add((new Chunk(chunk)));
                 //se agrega Genero
-                ph = new Phrase("\n\r Genero : ");
+                ph = new Phrase("\n\r Género : ");
                 p.Add(ph);
-                chunk = new Chunk("" + TuplaPDF[7] + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                string genero = TuplaPDF[7] == "F" ? "Femenino" : "Masculino";
+                chunk = new Chunk("" + genero + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
                 p.Add((new Chunk(chunk)));
                 //se agrega Hora entrada
                 ph = new Phrase("\n\r Hora entrada : ");

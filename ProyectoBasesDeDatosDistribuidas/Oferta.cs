@@ -115,10 +115,12 @@ namespace ProyectoBasesDeDatosDistribuidas
                         break;
                     case "Replica":
                         MezclaBDReplica(nombreTablaBDFragmento);
+                        funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto();
                         break;
 
                     default:
                         mezcaBDNormalDelSitio(sitios, nombreTablaBDFragmento);
+                        funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto();
                         break;
                 }
 
@@ -128,6 +130,166 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                 MessageBox.Show("No se pudo actualizar" + ex);
             }
+        }
+
+        private void funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto()
+        {
+            try
+            {
+               
+                List<string> listaIdsProduc = new System.Collections.Generic.List<string>();
+                List<string> listaNomProd = new System.Collections.Generic.List<string>();
+                List<string> listaProductoExistencias = new System.Collections.Generic.List<string>();
+                //obtener el id de los productos atra vez del datagrid
+                foreach (DataGridViewRow row in dataGridViewOferta.Rows)
+                {
+                     if (row.Cells[1].Value != null)
+                           listaIdsProduc.Add(row.Cells["Id_Producto"].Value.ToString());
+                    //More code here
+                }
+                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmento = new List<string>();
+                string nombreTablaGeneral = "";
+                string tipoFragmento = "";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                switch (tipoFragmento)
+                {
+                    //si es horizontal tiene las mismas columnas y solo hacemos merge en las rows
+                    case "Horizontal":
+
+
+                        break;
+                    case "Vertical":
+
+                        break;
+                    case "Replica":
+                        //convertir el id del producto al nombre y agregarlo a la lista listanomprod
+                        foreach (string idProduc in listaIdsProduc)
+                        {
+                            //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
+                            cmd = new SqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", cnSQL);
+                            dr = cmd.ExecuteReader();                          
+                            dr.Read();
+                            listaNomProd.Add((dr[0]).ToString());
+                            listaProductoExistencias.Add((dr[1]).ToString());
+                            dr.Close();
+
+                        }
+                        break;
+
+                    default:
+                        if (sitios.ElementAt(0)=="1")
+                        {
+                            //convertir el id del producto al nombre y agregarlo a la lista listanomprod
+                            foreach (string idProduc in listaIdsProduc)
+                            {
+                                //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
+                                cmd = new SqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", cnSQL);
+                                dr = cmd.ExecuteReader();
+                                dr.Read();
+                                listaNomProd.Add((dr[0]).ToString());
+                                listaProductoExistencias.Add((dr[1]).ToString());
+                                dr.Close();
+
+                            }
+                        }
+                        else {
+
+                            //convertir el id del producto al nombre y agregarlo a la lista listanomprod
+                            foreach (string idProduc in listaIdsProduc)
+                            {
+                                // Define a query
+                                NpgsqlCommand cmd = new NpgsqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", conNPG);
+
+                                // Execute a query
+                                NpgsqlDataReader drNpg = cmd.ExecuteReader();
+
+                                // Read all rows and output the first column in each row
+                                while (dr.Read())
+                                    listaNomProd.Add(dr[0].ToString());
+                                    listaProductoExistencias.Add((dr[1]).ToString());
+
+                            }
+                        
+                        }
+                        break;
+                }//fin switch   
+                //Cambiar el id producto del datagrid por el nombre del producto
+
+                //Agregar los campos del datagridoferta al nuevo datagridoferta2
+
+                try
+                {
+                    
+                    if (dataGridViewOfertaDos.Columns.Count == 0)
+                    {
+                        foreach (DataGridViewColumn dgvc in dataGridViewOferta.Columns)
+                        {
+                            if (dgvc.HeaderText == "id_Producto")
+                            {
+                                dgvc.HeaderText = "Producto";
+                                dgvc.Name="Producto";
+                            }
+                            dataGridViewOfertaDos.Columns.Add(dgvc.Clone() as DataGridViewColumn);
+                        }
+                        //agregar existencias
+                       DataGridViewColumn dgvcExistencia = dataGridViewOferta.Columns[3];
+                        dgvcExistencia.Name = "Existencias";
+                        dgvcExistencia.HeaderText = "Existencias";
+                        dataGridViewOfertaDos.Columns.Add(dgvcExistencia.Clone() as DataGridViewColumn);
+
+                    }
+                    int indiceModifProd = dataGridViewOfertaDos.Columns.IndexOf(dataGridViewOfertaDos.Columns["Producto"]);
+                    DataGridViewRow row = new DataGridViewRow();
+                    int cont =0;
+                    int contLista = 0;
+                    for (int i = 0; i < dataGridViewOferta.Rows.Count; i++)
+                    {
+                        row = (DataGridViewRow)dataGridViewOferta.Rows[i].Clone();
+                        
+                        int intColIndex = 0;
+                        foreach (DataGridViewCell cell in dataGridViewOferta.Rows[i].Cells)
+                        {
+                            if (cont == indiceModifProd)//cambiamos el dato id por el nombre
+                            {
+                                row.Cells[intColIndex].Value = listaNomProd.ElementAt(contLista);
+                                DataGridViewColumn cellExistencias = new DataGridViewColumn();
+                                row.Cells.Add(new DataGridViewTextBoxCell { Value = listaProductoExistencias.ElementAt(contLista) });                         
+                            }
+                            else
+                            {
+                                row.Cells[intColIndex].Value = cell.Value;
+                            }
+                            intColIndex++;
+                            cont++;
+                        }
+                        //agregamos al renglon el valor de existencias
+                        
+                        contLista++;
+                        dataGridViewOfertaDos.Rows.Add(row);
+                    }
+                    dataGridViewOfertaDos.AllowUserToAddRows = false;
+                    dataGridViewOfertaDos.Refresh();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Copy DataGridViw"+ ex);
+                }             
+
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+               
+            }
+           
+        
         }
 
         private void mezcaBDNormalDelSitio(List<string> sitios, List<string> nombreTablaBDFragmento)
@@ -622,6 +784,33 @@ namespace ProyectoBasesDeDatosDistribuidas
             catch (Exception ex)
             {
                 Console.WriteLine("no se inserto" + ex.Message);
+            }
+        }
+
+        private void dataGridViewOfertaDos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                textBoxDescripcion.Text = dataGridViewOfertaDos.CurrentRow.Cells[1].Value.ToString();
+                dateTimePickerVigencia.Text = dataGridViewOfertaDos.CurrentRow.Cells[2].Value.ToString();
+                numericDescuento.Value = Convert.ToInt32(dataGridViewOfertaDos.CurrentRow.Cells[3].Value);
+                comboBoxidProducto.Text = dataGridViewOfertaDos.CurrentRow.Cells[4].Value.ToString();
+              //Este codigo era para convertir del idprod al nombre
+                /* foreach (var item in ListaIdNombre)
+                {
+                    if (item.Contains(dataGridViewOferta.CurrentRow.Cells[4].Value.ToString()))
+                    {
+                        string[] temp = item.Split(',');
+
+                        comboBoxidProducto.Text = temp.ElementAt(1);
+                    }
+                }*/
+
+            }
+            catch (System.Exception er)
+            {
+
+                MessageBox.Show("error en datagrid" + er);
             }
         }
 

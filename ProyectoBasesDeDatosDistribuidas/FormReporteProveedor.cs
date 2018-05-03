@@ -165,7 +165,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                 if (row.Cells[1].Value != null)
                 {
                     listBoxProveedor.Items.Add(row.Cells[1].Value.ToString());
-                    string dato = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "";
+                    string dato = row.Cells[0].Value.ToString() + "," + row.Cells[1].Value.ToString() + "," + row.Cells[2].Value.ToString() + "," + row.Cells[3].Value.ToString() + "," + row.Cells[4].Value.ToString() + "," + row.Cells[5].Value.ToString() + "," + row.Cells[6].Value.ToString() + "";
                     ProveedorEnLista.Add(dato);
                 }
                 //More code here
@@ -382,7 +382,12 @@ namespace ProyectoBasesDeDatosDistribuidas
                 ph = new Phrase("\n\r Teléfono : ");
                 p.Add(ph);
                 chunk = new Chunk("" + TuplaPDFProveedor[3] + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
-                p.Add((new Chunk(chunk)));                            
+                p.Add((new Chunk(chunk)));
+                //se agrega direccion
+                ph = new Phrase("\t      Tipo : ");
+                p.Add(ph);
+                chunk = new Chunk("" + TuplaPDFProveedor[6] + "", FontFactory.GetFont(FontFactory.TIMES_ROMAN, 12.0f, iTextSharp.text.Font.BOLD | iTextSharp.text.Font.UNDERLINE));
+                p.Add((new Chunk(chunk)));        
                 //se agrega espacio
                 ph = new Phrase("\n\r \n\r");
                 p.Add(ph);

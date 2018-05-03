@@ -89,3 +89,4 @@ C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesD
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.FormReporteEmpleadoFiltro.resources
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.FormReporteProveedor.resources
 C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.formReporteFactura.resources
+C:\Users\rafael.DESKTOP-D898I0K\Documents\GitHub\Bases-de-datos-B\ProyectoBasesDeDatosDistribuidas\obj\Debug\ProyectoBasesDeDatosDistribuidas.csprojResolveAssemblyReference.cache

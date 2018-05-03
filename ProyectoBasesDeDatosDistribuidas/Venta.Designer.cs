@@ -55,7 +55,7 @@
             this.labelDescripcion.Name = "labelDescripcion";
             this.labelDescripcion.Size = new System.Drawing.Size(108, 13);
             this.labelDescripcion.TabIndex = 0;
-            this.labelDescripcion.Text = "Descripcion de venta";
+            this.labelDescripcion.Text = "Descripción de venta";
             // 
             // textBoxDescripcionVenta
             // 
@@ -170,9 +170,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(194, 77);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(43, 13);
+            this.label3.Size = new System.Drawing.Size(54, 13);
             this.label3.TabIndex = 16;
-            this.label3.Text = "STOCK";
+            this.label3.Text = "Inventario";
             // 
             // Carrito
             // 
