@@ -115,12 +115,12 @@ namespace ProyectoBasesDeDatosDistribuidas
                         break;
                     case "Replica":
                         MezclaBDReplica(nombreTablaBDFragmento);
-                        funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto();
+                 
                         break;
 
                     default:
                         mezcaBDNormalDelSitio(sitios, nombreTablaBDFragmento);
-                        funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto();
+                     
                         break;
                 }
 
@@ -132,174 +132,26 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
         }
 
-        private void funcionParaCambiarEnElDatagridViewDeIdProductoANombreProducto()
-        {
-            try
-            {
-               
-                List<string> listaIdsProduc = new System.Collections.Generic.List<string>();
-                List<string> listaNomProd = new System.Collections.Generic.List<string>();
-                List<string> listaProductoExistencias = new System.Collections.Generic.List<string>();
-                //obtener el id de los productos atra vez del datagrid
-                foreach (DataGridViewRow row in dataGridViewOferta.Rows)
-                {
-                     if (row.Cells[1].Value != null)
-                           listaIdsProduc.Add(row.Cells["Id_Producto"].Value.ToString());
-                    //More code here
-                }
-                //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
-                //variables necesarias para sacar datos del esquema de localizacion
-                List<string> idFragmentos = new List<string>();
-                List<string> nombreTablaBDFragmento = new List<string>();
-                string nombreTablaGeneral = "";
-                string tipoFragmento = "";
-                List<string> sitios = new List<string>();
-                List<string> condicion = new List<string>();
-                SitioCentral st = new SitioCentral();
-                st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
-                switch (tipoFragmento)
-                {
-                    //si es horizontal tiene las mismas columnas y solo hacemos merge en las rows
-                    case "Horizontal":
-
-
-                        break;
-                    case "Vertical":
-
-                        break;
-                    case "Replica":
-                        //convertir el id del producto al nombre y agregarlo a la lista listanomprod
-                        foreach (string idProduc in listaIdsProduc)
-                        {
-                            //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
-                            cmd = new SqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", cnSQL);
-                            dr = cmd.ExecuteReader();                          
-                            dr.Read();
-                            listaNomProd.Add((dr[0]).ToString());
-                            listaProductoExistencias.Add((dr[1]).ToString());
-                            dr.Close();
-
-                        }
-                        break;
-
-                    default:
-                        if (sitios.ElementAt(0)=="1")
-                        {
-                            //convertir el id del producto al nombre y agregarlo a la lista listanomprod
-                            foreach (string idProduc in listaIdsProduc)
-                            {
-                                //codigo para convertir internamente el nombre de la sucursal al id de la sucursal               
-                                cmd = new SqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", cnSQL);
-                                dr = cmd.ExecuteReader();
-                                dr.Read();
-                                listaNomProd.Add((dr[0]).ToString());
-                                listaProductoExistencias.Add((dr[1]).ToString());
-                                dr.Close();
-
-                            }
-                        }
-                        else {
-
-                            //convertir el id del producto al nombre y agregarlo a la lista listanomprod
-                            foreach (string idProduc in listaIdsProduc)
-                            {
-                                // Define a query
-                                NpgsqlCommand cmd = new NpgsqlCommand("Select nombre,cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " where id_Producto = '" + idProduc + "'", conNPG);
-
-                                // Execute a query
-                                NpgsqlDataReader drNpg = cmd.ExecuteReader();
-
-                                // Read all rows and output the first column in each row
-                                while (dr.Read())
-                                    listaNomProd.Add(dr[0].ToString());
-                                    listaProductoExistencias.Add((dr[1]).ToString());
-
-                            }
-                        
-                        }
-                        break;
-                }//fin switch   
-                //Cambiar el id producto del datagrid por el nombre del producto
-
-                //Agregar los campos del datagridoferta al nuevo datagridoferta2
-
-                try
-                {
-                    
-                    if (dataGridViewOfertaDos.Columns.Count == 0)
-                    {
-                        foreach (DataGridViewColumn dgvc in dataGridViewOferta.Columns)
-                        {
-                            if (dgvc.HeaderText == "id_Producto")
-                            {
-                                dgvc.HeaderText = "Producto";
-                                dgvc.Name="Producto";
-                            }
-                            dataGridViewOfertaDos.Columns.Add(dgvc.Clone() as DataGridViewColumn);
-                        }
-                        //agregar existencias
-                       DataGridViewColumn dgvcExistencia = dataGridViewOferta.Columns[3];
-                        dgvcExistencia.Name = "Existencias";
-                        dgvcExistencia.HeaderText = "Existencias";
-                        dataGridViewOfertaDos.Columns.Add(dgvcExistencia.Clone() as DataGridViewColumn);
-
-                    }
-                    int indiceModifProd = dataGridViewOfertaDos.Columns.IndexOf(dataGridViewOfertaDos.Columns["Producto"]);
-                    DataGridViewRow row = new DataGridViewRow();
-                    int cont =0;
-                    int contLista = 0;
-                    for (int i = 0; i < dataGridViewOferta.Rows.Count; i++)
-                    {
-                        row = (DataGridViewRow)dataGridViewOferta.Rows[i].Clone();
-                        
-                        int intColIndex = 0;
-                        foreach (DataGridViewCell cell in dataGridViewOferta.Rows[i].Cells)
-                        {
-                            if (cont == indiceModifProd)//cambiamos el dato id por el nombre
-                            {
-                                row.Cells[intColIndex].Value = listaNomProd.ElementAt(contLista);
-                                DataGridViewColumn cellExistencias = new DataGridViewColumn();
-                                row.Cells.Add(new DataGridViewTextBoxCell { Value = listaProductoExistencias.ElementAt(contLista) });                         
-                            }
-                            else
-                            {
-                                row.Cells[intColIndex].Value = cell.Value;
-                            }
-                            intColIndex++;
-                            cont++;
-                        }
-                        //agregamos al renglon el valor de existencias
-                        
-                        contLista++;
-                        dataGridViewOfertaDos.Rows.Add(row);
-                    }
-                    dataGridViewOfertaDos.AllowUserToAddRows = false;
-                    dataGridViewOfertaDos.Refresh();
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Copy DataGridViw"+ ex);
-                }             
-
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-               
-            }
-           
-        
-        }
-
+      
         private void mezcaBDNormalDelSitio(List<string> sitios, List<string> nombreTablaBDFragmento)
         {
 
             switch (sitios.ElementAt(0))
             {
                 case "1":
+                    //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                    //variables necesarias para sacar datos del esquema de localizacion
+                    List<string> idFragmentos = new List<string>();
+                    List<string> nombreTablaBDFragmentoProd = new List<string>();
+                    string nombreTablaGeneral = "";
+                    string tipoFragmento = "";
+                    List<string> sitiosprod = new List<string>();
+                    List<string> condicion = new List<string>();
+                    SitioCentral st = new SitioCentral();
+                    st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmentoProd, ref nombreTablaGeneral, ref sitiosprod, ref tipoFragmento, ref condicion);
                     //codigo para hacer el select al sitio1
-                    da = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento.ElementAt(0) + "", cnSQL);
+                    string query ="select id_Oferta , descripcion , vigencia , descuento, Prod.nombre, cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " as OFE," + nombreTablaBDFragmentoProd[0] + " as Prod where OFE.id_Producto= Prod.id_Producto ";
+                    da = new SqlDataAdapter(query, cnSQL);          
                     dt = new DataTable();
                     da.Fill(dt);
                     //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
@@ -311,8 +163,19 @@ namespace ProyectoBasesDeDatosDistribuidas
 
 
                 case "2":
+                    //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                    //variables necesarias para sacar datos del esquema de localizacion
+                    idFragmentos = new List<string>();
+                     nombreTablaBDFragmentoProd = new List<string>();
+                    nombreTablaGeneral = "";
+                     tipoFragmento = "";
+                    sitiosprod = new List<string>();
+                     condicion = new List<string>();
+                     st = new SitioCentral();
+                    st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmentoProd, ref nombreTablaGeneral, ref sitiosprod, ref tipoFragmento, ref condicion);
+                   
                     //Codigo para hacer el select from a al sitio2             
-                    NpgsqlDataAdapter add = new NpgsqlDataAdapter("select * from '" + nombreTablaBDFragmento.ElementAt(0) + "'", conNPG);
+                    NpgsqlDataAdapter add = new NpgsqlDataAdapter("select id_Oferta , descripcion , vigencia , descuento, Prod.nombre, cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " as OFE," + nombreTablaBDFragmentoProd[0] + " as Prod where OFE.id_Producto= Prod.id_Producto ", conNPG);
                     dtNPG = new DataTable();
                     add.Fill(dtNPG);
                     dataGridViewOferta.DataSource = dtNPG;
@@ -325,15 +188,25 @@ namespace ProyectoBasesDeDatosDistribuidas
 
         private void MezclaBDReplica(List<string> nombreTablaBDFragmento)
         {
-
-            //codigo para hacer el select al sitio1
-            da = new SqlDataAdapter("Select * from '" + nombreTablaBDFragmento.ElementAt(0) + "'", cnSQL);
-            dt = new DataTable();
-            da.Fill(dt);
-            //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
-            dataGridViewOferta.DataSource = dt;
-            //para esconder el campor RFC
-            dataGridViewOferta.Columns[0].Visible = false;
+            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+                //variables necesarias para sacar datos del esquema de localizacion
+                List<string> idFragmentos = new List<string>();
+                List<string> nombreTablaBDFragmentoProd = new List<string>();
+                string nombreTablaGeneral = "";
+                string tipoFragmento = "";
+                List<string> sitios = new List<string>();
+                List<string> condicion = new List<string>();
+                SitioCentral st = new SitioCentral();
+                st.LeeEsquemaLocalizacion("Producto", ref idFragmentos, ref nombreTablaBDFragmentoProd, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
+                //codigo para hacer el select al sitio1
+                string query = "select id_Oferta , descripcion , vigencia , descuento, Prod.nombre, cantidad from " + nombreTablaBDFragmento.ElementAt(0) + " as OFE," + nombreTablaBDFragmentoProd[0] + " as Prod where OFE.id_Producto= Prod.id_Producto ";
+                da = new SqlDataAdapter(query, cnSQL);
+                dt = new DataTable();
+                da.Fill(dt);
+                //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
+                dataGridViewOferta.DataSource = dt;
+                //para esconder el campor RFC
+                dataGridViewOferta.Columns[0].Visible = false;
         }
 
         private void comboBoxidProducto_Enter(object sender, System.EventArgs e)
@@ -787,32 +660,7 @@ namespace ProyectoBasesDeDatosDistribuidas
             }
         }
 
-        private void dataGridViewOfertaDos_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                textBoxDescripcion.Text = dataGridViewOfertaDos.CurrentRow.Cells[1].Value.ToString();
-                dateTimePickerVigencia.Text = dataGridViewOfertaDos.CurrentRow.Cells[2].Value.ToString();
-                numericDescuento.Value = Convert.ToInt32(dataGridViewOfertaDos.CurrentRow.Cells[3].Value);
-                comboBoxidProducto.Text = dataGridViewOfertaDos.CurrentRow.Cells[4].Value.ToString();
-              //Este codigo era para convertir del idprod al nombre
-                /* foreach (var item in ListaIdNombre)
-                {
-                    if (item.Contains(dataGridViewOferta.CurrentRow.Cells[4].Value.ToString()))
-                    {
-                        string[] temp = item.Split(',');
-
-                        comboBoxidProducto.Text = temp.ElementAt(1);
-                    }
-                }*/
-
-            }
-            catch (System.Exception er)
-            {
-
-                MessageBox.Show("error en datagrid" + er);
-            }
-        }
+       
 
     }
 }

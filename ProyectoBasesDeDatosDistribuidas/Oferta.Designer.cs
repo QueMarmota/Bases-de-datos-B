@@ -41,10 +41,8 @@
             this.id_Producto = new System.Windows.Forms.Label();
             this.comboBoxidProducto = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.dataGridViewOfertaDos = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.numericDescuento)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOferta)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOfertaDos)).BeginInit();
             this.SuspendLayout();
             // 
             // labelDescripcion
@@ -99,11 +97,10 @@
             // dataGridViewOferta
             // 
             this.dataGridViewOferta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOferta.Location = new System.Drawing.Point(804, 146);
+            this.dataGridViewOferta.Location = new System.Drawing.Point(69, 239);
             this.dataGridViewOferta.Name = "dataGridViewOferta";
             this.dataGridViewOferta.Size = new System.Drawing.Size(441, 150);
             this.dataGridViewOferta.TabIndex = 6;
-            this.dataGridViewOferta.Visible = false;
             this.dataGridViewOferta.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewOferta_CellClick);
             // 
             // BtnInsertar
@@ -141,9 +138,9 @@
             this.id_Producto.AutoSize = true;
             this.id_Producto.Location = new System.Drawing.Point(78, 62);
             this.id_Producto.Name = "id_Producto";
-            this.id_Producto.Size = new System.Drawing.Size(64, 13);
+            this.id_Producto.Size = new System.Drawing.Size(50, 13);
             this.id_Producto.TabIndex = 10;
-            this.id_Producto.Text = "id_Producto";
+            this.id_Producto.Text = "Producto";
             // 
             // comboBoxidProducto
             // 
@@ -163,21 +160,11 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "%";
             // 
-            // dataGridViewOfertaDos
-            // 
-            this.dataGridViewOfertaDos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOfertaDos.Location = new System.Drawing.Point(29, 238);
-            this.dataGridViewOfertaDos.Name = "dataGridViewOfertaDos";
-            this.dataGridViewOfertaDos.Size = new System.Drawing.Size(528, 150);
-            this.dataGridViewOfertaDos.TabIndex = 13;
-            this.dataGridViewOfertaDos.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewOfertaDos_CellClick);
-            // 
             // Oferta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(628, 466);
-            this.Controls.Add(this.dataGridViewOfertaDos);
+            this.ClientSize = new System.Drawing.Size(537, 466);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxidProducto);
             this.Controls.Add(this.id_Producto);
@@ -197,7 +184,6 @@
             this.Load += new System.EventHandler(this.Oferta_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericDescuento)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOferta)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOfertaDos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,6 +204,5 @@
         private System.Windows.Forms.Label id_Producto;
         private System.Windows.Forms.ComboBox comboBoxidProducto;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView dataGridViewOfertaDos;
     }
 }
