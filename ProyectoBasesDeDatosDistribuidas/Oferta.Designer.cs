@@ -164,7 +164,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(537, 466);
+            this.ClientSize = new System.Drawing.Size(558, 466);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxidProducto);
             this.Controls.Add(this.id_Producto);

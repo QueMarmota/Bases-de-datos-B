@@ -456,16 +456,10 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                                                 MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
                                             }
-
-                                            break;
-                                            
                                             break;
                                         default:
                                             break;
-                                    }
-                                    cargaTabla();
-                                    limpiarCampos();
-                                    //fin de insercion
+                                    }                                   
                                     break;
                                 //Sitio2
                                 case "Administrador":
@@ -493,33 +487,21 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                                                 MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
                                             }
-
-                                            break;
-                                            
-                                            break;
+                                            break;                                            
                                         default:
                                             break;
-                                    }
-                                    cargaTabla();
-                                    limpiarCampos();
-                                    //fin de insercion
-                                   
+                                    }                                   
                                     break;
 
                                 default:
                                     break;
                             }
-
-
                         }
                         break;
                     case "Vertical":
                         break;
                     case "Replica":
-
                         //insertar en ambos sitios
-
-
                         break;
 
                     default:

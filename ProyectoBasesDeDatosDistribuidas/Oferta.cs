@@ -114,8 +114,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                         break;
                     case "Replica":
-                        MezclaBDReplica(nombreTablaBDFragmento);
-                 
+                        MezclaBDReplica(nombreTablaBDFragmento);                 
                         break;
 
                     default:
@@ -481,7 +480,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                             if (sitios.ElementAt(0).Contains("1"))
                             {
                                 //Insercion en sql server sitio1
-                                string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + " WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -489,13 +488,13 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 //fin de insercion
 
                                 //Insercion en NPG sitio2
-                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + " WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                             }
                             else
                             {
                                 //Insercion en sql server sitio1
-                                string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "UPDATE " + nombreTablaBDFragmento.ElementAt(1).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + " WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -503,7 +502,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                                 //fin de insercion
 
                                 //Insercion en NPG sitio2
-                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento +" WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                             }
 
@@ -523,7 +522,7 @@ namespace ProyectoBasesDeDatosDistribuidas
                         {
                             case "1":
                                 //Insercion en sql server
-                                string consulta = "UPDATE  " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
+                                string consulta = "UPDATE  " + nombreTablaBDFragmento.ElementAt(0).ToString() + " SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + " WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "";
                                 cmd = new SqlCommand(consulta, cnSQL);
                                 cmd.ExecuteNonQuery();
                                 cargaTabla();
@@ -534,7 +533,7 @@ namespace ProyectoBasesDeDatosDistribuidas
 
                             case "2":
 
-                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + "  SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + ",id_Producto = '" + Convert.ToInt32(idProducto) + "' WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                NpgsqlCommand command = new NpgsqlCommand("UPDATE " + nombreTablaBDFragmento.ElementAt(0).ToString() + "  SET descripcion = '" + descripcion + "',vigencia = '" + Vigencia + "',descuento = " + Descuento + "WHERE id_Oferta = " + dataGridViewOferta.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
                                 command.ExecuteNonQuery();
                                 cargaTabla();
                                 limpiarCampos();

@@ -135,23 +135,38 @@ namespace ProyectoBasesDeDatosDistribuidas
                }
            }
            */
+            //Validacion en esquema de localizacion---------------------------------------------------------------------------------------------------------------
+            //variables necesarias para sacar datos del esquema de localizacion
+            List<string> idFragmentos = new List<string>();
+            List<string> nombreTablaBDFragmento = new List<string>();
+            string nombreTablaGeneral = "";
+            string tipoFragmento = "";
+            List<string> sitios = new List<string>();
+            List<string> condicion = new List<string>();
+            SitioCentral st = new SitioCentral();
+            st.LeeEsquemaLocalizacion("Proveedor", ref idFragmentos, ref nombreTablaBDFragmento, ref nombreTablaGeneral, ref sitios, ref tipoFragmento, ref condicion);
             NpgsqlDataAdapter add;
-            //codigo para hacer el select al sitio1
-            da = new SqlDataAdapter("Select * from Proveedor1 ORDER BY id_Proveedor DESC", cnSQL);
-            dt = new DataTable();
-            da.Fill(dt);
-            //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
-            dataGridViewProveedor.DataSource = dt;
+           
+                
+                //codigo para hacer el select al sitio1
+                da = new SqlDataAdapter("Select * from " + nombreTablaBDFragmento[0] + " ORDER BY id_Proveedor DESC", cnSQL);
+                dt = new DataTable();
+                da.Fill(dt);
+                //dt.Columns.RemoveAt(0);//Para quitar el campo RFC
+                dataGridViewProveedor.DataSource = dt;
 
 
-            //Codigo para hacer el select from a al sitio2             
-            add = new NpgsqlDataAdapter("select * from Proveedor2 ORDER BY id_Proveedor DESC", conNPG);
-            //add.Fill(datos);
-            dtNPG = new DataTable();
-            add.Fill(dtNPG);
-            // dtNPG.Columns.RemoveAt(0);//para quitar el campo RFC
 
-           // dt.Merge(dtNPG);
+                //Codigo para hacer el select from a al sitio2             
+                add = new NpgsqlDataAdapter("select * from " + nombreTablaBDFragmento[1] + " ORDER BY id_Proveedor DESC", conNPG);
+                //add.Fill(datos);
+                dtNPG = new DataTable();
+                add.Fill(dtNPG);
+                // dtNPG.Columns.RemoveAt(0);//para quitar el campo RFC
+
+                // dt.Merge(dtNPG); 
+          
+           
             
             //Hacer merge entre los dos select del sito1 y el sitio2
             foreach (var column in dtNPG.Columns)

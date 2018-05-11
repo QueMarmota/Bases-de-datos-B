@@ -57,7 +57,7 @@
             // dataGridViewEmpleados
             // 
             this.dataGridViewEmpleados.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewEmpleados.Location = new System.Drawing.Point(360, 57);
+            this.dataGridViewEmpleados.Location = new System.Drawing.Point(372, 40);
             this.dataGridViewEmpleados.Name = "dataGridViewEmpleados";
             this.dataGridViewEmpleados.Size = new System.Drawing.Size(240, 150);
             this.dataGridViewEmpleados.TabIndex = 3;
