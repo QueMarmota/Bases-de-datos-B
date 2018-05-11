@@ -222,19 +222,20 @@ namespace ProyectoBasesDeDatosDistribuidas
                             {
                                 //Sitio1
                                 case "Empleado":
-                                    //Insercion en sql server
-                                    string consulta = "Insert into " + atributos[1].ToString() + " values('" + TextBoxNombre.Text + "'," + NumericSueldo.Value + ",'" + ComboBoxPuesto.Text + "','" + TextBoxTelefono.Text + "','" + TextBoxDireccion.Text + "','" + fecha_nacimiento + "','" + genero + "','" + hora_Entrada + "','" + hora_Salida + "'," + idSuc + ")";
-                                    cmd = new SqlCommand(consulta, cnSQL);
-                                    dr.Close();
-                                    cmd.ExecuteNonQuery();
-                                    cargaTabla();
-                                    limpiarCampos();
-                                    //fin de insercion
-                                    break;
-                                //Sitio2
-                                case "Administrador":
-                                    //Insercion en NPG
-                                    try
+                                    switch (atributos[4].ToString())
+	                                {
+                                        case"1":
+                                            //Insercion en sql server
+                                            string consulta = "Insert into " + atributos[1].ToString() + " values('" + TextBoxNombre.Text + "'," + NumericSueldo.Value + ",'" + ComboBoxPuesto.Text + "','" + TextBoxTelefono.Text + "','" + TextBoxDireccion.Text + "','" + fecha_nacimiento + "','" + genero + "','" + hora_Entrada + "','" + hora_Salida + "'," + idSuc + ")";
+                                            cmd = new SqlCommand(consulta, cnSQL);
+                                            dr.Close();
+                                            cmd.ExecuteNonQuery();
+                                            cargaTabla();
+                                            limpiarCampos();
+                                            //fin de insercion
+                                            break;
+                                        case "2":
+                                            try
                                     {
                                         NpgsqlCommand command = new NpgsqlCommand("Insert into " + atributos[1].ToString() + "(nombre,sueldo,puesto,teléfono,dirección,fecha_nacimiento,genero,hora_entrada,hora_salida,id_Sucursal) values('" + TextBoxNombre.Text + "'," + NumericSueldo.Value + ",'" + ComboBoxPuesto.Text + "','" + TextBoxTelefono.Text + "','" + TextBoxDireccion.Text + "','" + fecha_nacimiento + "','" + genero + "','" + hora_Entrada + "','" + hora_Salida + "'," + idSuc + ")", conNPG);
                                         dr.Close();
@@ -250,6 +251,48 @@ namespace ProyectoBasesDeDatosDistribuidas
                                     cargaTabla();
                                     limpiarCampos();
                                     //fin de insercion
+                                            break;
+		                                default:
+                                            break;
+	                                }
+                                    
+                                    break;
+                                //Sitio2
+                                case "Administrador":
+                                    //Insercion en NPG
+                                    switch (atributos[4].ToString())
+                                    {
+                                        case "1":
+                                            //Insercion en sql server
+                                            string consulta = "Insert into " + atributos[1].ToString() + " values('" + TextBoxNombre.Text + "'," + NumericSueldo.Value + ",'" + ComboBoxPuesto.Text + "','" + TextBoxTelefono.Text + "','" + TextBoxDireccion.Text + "','" + fecha_nacimiento + "','" + genero + "','" + hora_Entrada + "','" + hora_Salida + "'," + idSuc + ")";
+                                            cmd = new SqlCommand(consulta, cnSQL);
+                                            dr.Close();
+                                            cmd.ExecuteNonQuery();
+                                            cargaTabla();
+                                            limpiarCampos();
+                                            //fin de insercion
+                                            break;
+                                        case "2":
+                                            try
+                                            {
+                                                NpgsqlCommand command = new NpgsqlCommand("Insert into " + atributos[1].ToString() + "(nombre,sueldo,puesto,teléfono,dirección,fecha_nacimiento,genero,hora_entrada,hora_salida,id_Sucursal) values('" + TextBoxNombre.Text + "'," + NumericSueldo.Value + ",'" + ComboBoxPuesto.Text + "','" + TextBoxTelefono.Text + "','" + TextBoxDireccion.Text + "','" + fecha_nacimiento + "','" + genero + "','" + hora_Entrada + "','" + hora_Salida + "'," + idSuc + ")", conNPG);
+                                                dr.Close();
+                                                command.ExecuteNonQuery();
+
+                                            }
+                                            catch (Exception error)
+                                            {
+
+                                                MessageBox.Show("ERROR al insertar en NPG: " + error.Message);
+                                            }
+
+                                            cargaTabla();
+                                            limpiarCampos();
+                                            //fin de insercion
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                     break;
 
                                 default:
@@ -388,28 +431,78 @@ namespace ProyectoBasesDeDatosDistribuidas
                             {
                                 //Sitio1
                                 case "Empleado":
-                                    //eliminar en sql server
-                                    string consulta = "DELETE FROM " + atributos[1].ToString() + " WHERE RFC = "+dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString()+"";
-                                    cmd = new SqlCommand(consulta, cnSQL);
-                                    dr.Close();
-                                    cmd.ExecuteNonQuery();
-                                    //fin de eliminacion
+
+                                    switch (atributos[4].ToString())
+                                    {
+                                        case "1":
+                                            //eliminar en sql server
+                                            string consulta = "DELETE FROM " + atributos[1].ToString() + " WHERE RFC = " + dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString() + "";
+                                            cmd = new SqlCommand(consulta, cnSQL);
+                                            dr.Close();
+                                            cmd.ExecuteNonQuery();
+                                            //fin de eliminacion
+                                            break;
+                                        case "2":
+                                            //eliminar en NPG
+                                            try
+                                            {
+                                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + atributos[1].ToString() + " WHERE RFC = " + dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                                dr.Close();
+                                                command.ExecuteNonQuery();
+
+                                            }
+                                            catch (Exception error)
+                                            {
+
+                                                MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
+                                            }
+
+                                            break;
+                                            
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    cargaTabla();
+                                    limpiarCampos();
+                                    //fin de insercion
                                     break;
                                 //Sitio2
                                 case "Administrador":
-                                    //eliminar en NPG
-                                    try
+                                   switch (atributos[4].ToString())
                                     {
-                                        NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + atributos[1].ToString() + " WHERE RFC = "+dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString()+"", conNPG);
-                                        dr.Close();
-                                        command.ExecuteNonQuery();
+                                        case "1":
+                                            //eliminar en sql server
+                                            string consulta = "DELETE FROM " + atributos[1].ToString() + " WHERE RFC = " + dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString() + "";
+                                            cmd = new SqlCommand(consulta, cnSQL);
+                                            dr.Close();
+                                            cmd.ExecuteNonQuery();
+                                            //fin de eliminacion
+                                            break;
+                                        case "2":
+                                            //eliminar en NPG
+                                            try
+                                            {
+                                                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM " + atributos[1].ToString() + " WHERE RFC = " + dataGridViewEmpleado.CurrentRow.Cells[0].Value.ToString() + "", conNPG);
+                                                dr.Close();
+                                                command.ExecuteNonQuery();
 
-                                    }
-                                    catch (Exception error)
-                                    {
+                                            }
+                                            catch (Exception error)
+                                            {
 
-                                        MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
+                                                MessageBox.Show("ERROR al eliminar en NPG: " + error.Message);
+                                            }
+
+                                            break;
+                                            
+                                            break;
+                                        default:
+                                            break;
                                     }
+                                    cargaTabla();
+                                    limpiarCampos();
+                                    //fin de insercion
                                    
                                     break;
 
